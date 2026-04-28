@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "SITREK Mentari",
+  "version": "2.0.1",
+  "description": "Ekstensi untuk melacak forum diskusi Mentari UNPAM secara otomatis dengan asisten Gemini AI.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://mentari.unpam.ac.id/*",
+    "https://my.unpam.ac.id/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://mentari.unpam.ac.id/*", "https://my.unpam.ac.id/*"],
+      "exclude_matches": [
+        "https://mentari.unpam.ac.id/login",
+        "https://my.unpam.ac.id/login"
+      ],
+      "js": ["scripts/loader.js"]
+    },
+    {
+      "matches": ["https://mentari.unpam.ac.id/u-courses/*/forum/*/topics/*"],
+      "js": ["scripts/discus.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/core/*.js",
+        "src/components/*.js",
+        "src/content/*.js",
+        "assets/icon.png"
+      ],
+      "matches": ["https://mentari.unpam.ac.id/*", "https://my.unpam.ac.id/*"]
+    }
+  ],
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  }
+}
