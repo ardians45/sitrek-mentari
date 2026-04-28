@@ -1,103 +1,262 @@
 # 🛰️ SITREK Mentari
 
+![Icon](assets/icon.png)
+
 [![Version](https://img.shields.io/badge/version-2.0.1-blue.svg?style=for-the-badge)](https://github.com/your-repo)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Chrome%20%7C%20Edge-lightgrey.svg?style=for-the-badge)](https://mentari.unpam.ac.id)
 
-**SITREK Mentari** is an advanced browser extension (Manifest V3) designed to revolutionize your academic experience at **UNPAM**. Powered by Google Gemini AI, it provides seamless automation, real-time progress tracking, and intelligent assistance for the Mentari E-Learning and Academic Portal.
+**SITREK Mentari** adalah ekstensi browser lanjutan (Manifest V3) yang dirancang untuk merevolusi pengalaman akademik Anda di **UNPAM**. Didukung oleh Google Gemini AI, ekstensi ini menyediakan otomatisasi tanpa batas, pelacakan progres waktu nyata, dan asisten cerdas untuk Portal E-Learning dan Akademik Mentari.
 
 ---
 
-## 🌟 Key Features
+## 📋 Daftar Isi
 
-### 1. 🧠 Neural Forum Tracker
-Track your discussion progress across all courses with a high-end **iOS Glassmorphism UI**.
-- **Complete Visibility:** View history for all meetings (P1 - P14).
-- **Smart Status:** 
-  - `🟢 Done`: Forum completed.
-  - `🟠 Wait`: Active forum needing attention.
-  - `⚪ Locked`: Closed or unavailable forums.
-  - `∅ Empty`: Meetings without forum components.
-- **Direct Navigation:** Click any pill to jump directly to the specific forum or meeting section.
-
-### 2. 🤖 Gemini AI Integration
-Integrated AI assistant to help you excel in your studies.
-- **Auto-Answer Quiz:** Automatically solve quiz questions with high accuracy using Gemini 2.0 Flash.
-- **Forum Assistant:** Generate high-quality responses and questions for discussion forums.
-- **Smart Chatbot:** Floating AI chat interface for academic inquiries, supporting context memory.
-
-### 3. 📊 Academic Insights
-Real-time data synchronization directly from university APIs.
-- **Attendance Monitor:** View detailed presence statistics and percentages.
-- **WhatsApp Summary:** Generate a professional weekly meeting summary formatted for your class groups with one click.
-- **Lecturer Notifications:** Get alerted when a lecturer replies to your forum posts.
-
-### 4. ⚡ Automation & Productivity
-- **Auto-Fill Questionnaire:** Complete evaluation forms instantly.
-- **Quick Survey:** One-click rating for KHS surveys (Weighted/Random modes).
-- **Auto Password:** Smart login assistance for the Mentari portal.
+1. [Fitur Utama](#-fitur-utama)
+2. [Prasyarat](#-prasyarat)
+3. [Panduan Instalasi](#-panduan-instalasi)
+4. [Cara Penggunaan](#-cara-penggunaan)
+5. [Arsitektur Teknis](#-arsitektur-teknis)
+6. [Troubleshooting](#-troubleshooting)
+7. [FAQ](#-faq)
+8. [Lisensi](#-lisensi)
 
 ---
 
-## 🚀 Installation Guide
+## 🌟 Fitur Utama
 
-1. **Download the Repository:**
-   Clone or download this project as a ZIP and extract it to a folder.
-2. **Open Extensions Page:**
-   Go to `chrome://extensions/` (Chrome) or `edge://extensions/` (Edge).
-3. **Enable Developer Mode:**
-   Toggle the **"Developer mode"** switch in the top right corner.
-4. **Load Unpacked:**
-   Click the **"Load unpacked"** button and select the folder where you extracted the extension.
-5. **Pin Extension:**
-   Find the **SITREK Mentari** icon in your toolbar and pin it for quick access.
+### 1. 🧠 Pelacak Forum Neural
+Lacak progres diskusi Anda di semua mata kuliah dengan antarmuka **iOS Glassmorphism** berkualitas tinggi.
 
----
+- **Visibilitas Lengkap:** Lihat riwayat semua pertemuan (P1 - P14).
+- **Status Cerdas:** 
+  - `🟢 Selesai`: Forum telah diselesaikan.
+  - `🟠 Menunggu`: Forum aktif yang membutuhkan perhatian.
+  - `⚪ Terkunci`: Forum tertutup atau tidak tersedia.
+  - `∅ Kosong`: Pertemuan tanpa komponen forum.
+- **Navigasi Langsung:** Klik sembarang tombol untuk langsung menuju ke forum atau bagian pertemuan tertentu.
 
-## 📖 How to Use
+### 2. 🤖 Integrasi Gemini AI
+Asisten AI terintegrasi untuk membantu Anda dalam studi.
 
-### Setup AI Assistant
-1. Open [Mentari UNPAM](https://mentari.unpam.ac.id).
-2. A popup will ask for your **Gemini API Key**.
-3. Obtain a free key from the [Google AI Studio](https://aistudio.google.com/app/apikey).
-4. Paste the key and click **Save**.
+- **Jawaban Quiz Otomatis:** Selesaikan soal quiz secara otomatis dengan akurasi tinggi menggunakan Gemini 2.0 Flash.
+- **Asisten Forum:** Hasilkan respons dan pertanyaan berkualitas tinggi untuk forum diskusi.
+- **Chatbot Cerdas:** Antarmuka chat AI mengambang untuk pertanyaan akademik, mendukung memori konteks.
 
-### Syncing Your Data
-1. Navigate to the Mentari Dashboard.
-2. Click the **Refresh** icon (🔄) in the Tracker UI.
-3. Wait for "Neural Sync" to complete (the loading bar will show progress).
-4. Your course list and meeting status will appear instantly.
+### 3. 📊 Wawasan Akademik
+Sinkronisasi data waktu nyata langsung dari API universitas.
 
-### Sharing Class Summary
-1. Once data is synced, click the **Summary** button in the bottom status bar.
-2. A WhatsApp window will open with a perfectly formatted message:
-   ```text
-   *REKAP PERTEMUAN MENTARI*
-   
-   *OFFLINE :*
-   PEMROGRAMAN II: *pert 9*
-   ...
-   ```
+- **Monitor Absensi:** Lihat statistik kehadiran detail dan persentase.
+- **Ringkasan WhatsApp:** Hasilkan ringkasan pertemuan mingguan profesional yang diformat untuk grup kelas Anda dengan satu klik.
+- **Notifikasi Dosen:** Dapatkan pemberitahuan saat dosen membalas posting forum Anda.
+
+### 4. ⚡ Otomatisasi & Produktivitas
+- **Isi Kuesioner Otomatis:** Selesaikan formulir evaluasi secara instan.
+- **Quick Survey:** Rating satu klik untuk survei KHS (mode Weighted/Random).
+- **Password Otomatis:** Asisten login cerdas untuk portal Mentari.
 
 ---
 
-## 🛠️ Technical Architecture
+## 📦 Prasyarat
 
-- **Engine:** JavaScript (ES6+), Manifest V3.
-- **UI:** CSS Grid/Flexbox, High-Contrast Glassmorphism, iOS-inspired Aesthetics.
-- **AI Core:** Google Gemini API (v1beta).
-- **Security:** Token-based authentication using existing session interception (No credentials stored).
-- **Storage:** Localized `localStorage` caching with periodic validation.
+Sebelum menginstal ekstensi, pastikan Anda memiliki:
+
+| Persyaratan | Detail |
+|-------------|--------|
+| **Browser** | Google Chrome 88+ atau Microsoft Edge 88+ |
+| **API Key Gemini** | Akun Google AI Studio (gratis) |
+| **Akun Mentari** | Aktab mahasiswa aktif UNPAM |
+| **Koneksi Internet** | Stabil (disarankan) |
+
+---
+
+## 🚀 Panduan Instalasi
+
+### Langkah 1: Unduh Repositori
+
+```bash
+# Clone repositori
+git clone https://github.com/your-repo/sitrek-mentari.git
+
+# Atau unduh sebagai ZIP
+# Klik tombol "Code" → "Download ZIP"
+```
+
+### Langkah 2: Buka Halaman Ekstensi
+
+- **Chrome:** Buka `chrome://extensions/`
+- **Edge:** Buka `edge://extensions/`
+
+### Langkah 3: Aktifkan Mode Pengembang
+
+1. Temukan toggle **"Developer mode"** di pojok kanan atas
+2. Aktifkan dengan menggeser tombol ke posisi **ON**
+
+### Langkah 4: Muat Ekstensi
+
+1. Klik tombol **"Load unpacked"**
+2. Pilih folder tempat Anda mengekstrak ekstensi
+3. Tunggu hingga proses selesai
+
+### Langkah 5: Pin Ekstensi
+
+1. Temukan ikon **SITREK Mentari** di toolbar browser Anda
+2. Klik ikon pin untuk akses cepat
+
+---
+
+## 📖 Cara Penggunaan
+
+### 🔑 Setup Asisten AI
+
+1. Buka [Mentari UNPAM](https://mentari.unpam.ac.id)
+2. Popup akan meminta **API Key Gemini** Anda
+3. Dapatkan kunci gratis dari [Google AI Studio](https://aistudio.google.com/app/apikey)
+4. Tempelkan kunci dan klik **Simpan**
+
+> **📌 Catatan:** API Key Gemini gratis dengan batas penggunaan tertentu. Untuk penggunaan intensif, pertimbangkan upgrade ke paket berbayar.
+
+### 🔄 Sinkronisasi Data
+
+1. Navigasi ke Dashboard Mentari
+2. Klik ikon **Refresh** (🔄) di Tracker UI
+3. Tunggu "Neural Sync" selesai (loading bar akan menampilkan progres)
+4. Daftar mata kuliah dan status pertemuan akan muncul secara instan
+
+### 📤 Berbagi Ringkasan Kelas
+
+1. Setelah data tersinkron, klik tombol **Summary** di status bar bawah
+2. Jendela WhatsApp akan terbuka dengan pesan yang diformat sempurna:
+
+```text
+*REKAP PERTEMUAN MENTARI*
+
+*OFFLINE :*
+PEMROGRAMAN II: *pert 9*
+...
+```
+
+---
+
+## 🛠️ Arsitektur Teknis
+
+| Komponen | Teknologi |
+|----------|-----------|
+| **Mesin** | JavaScript (ES6+), Manifest V3 |
+| **UI** | CSS Grid/Flexbox, High-Contrast Glassmorphism, Estetika iOS |
+| **AI Core** | Google Gemini API (v1beta) |
+| **Keamanan** | Autentikasi berbasis token menggunakan intersepsi sesi yang ada (Tidak ada kredensial disimpan) |
+| **Penyimpanan** | `localStorage` yang dilokalkan dengan validasi periodik |
+
+### Diagram Arsitektur
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    SITREK Mentari                       │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │  Popup UI   │  │ Content UI  │  │  Tracker    │    │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘    │
+│         │                │                │           │
+│  ┌──────▼────────────────▼────────────────▼──────┐    │
+│  │              Core Modules                      │    │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────┐  │    │
+│  │  │   API   │ │ Gemini  │ │Storage  │ │Inter│  │    │
+│  │  │ Manager │ │  Core   │ │ Manager │ │ceptor│  │    │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────┘  │    │
+│  └──────────────────────┬────────────────────────┘    │
+│                         │                              │
+│  ┌──────────────────────▼────────────────────────┐    │
+│  │              External Services                 │    │
+│  │  ┌──────────────┐  ┌──────────────────────┐   │    │
+│  │  │ Mentari API  │  │  Google Gemini API   │   │    │
+│  │  └──────────────┘  └──────────────────────┘   │    │
+│  └─────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Masalah Umum dan Solusi
+
+| Masalah | Solusi |
+|---------|--------|
+| **Ekstensi tidak muncul** | Pastikan Mode Pengembang aktif dan muat ulang halaman ekstensi |
+| **API Key tidak valid** | Verifikasi kunci Anda di Google AI Studio dan pastikan belum kedaluwarsa |
+| **Data tidak tersinkron** | Periksa koneksi internet dan coba klik refresh lagi |
+| **Popup tidak terbuka** | Klik kanan pada ikon ekstensi → "Options" atau cek izin akses |
+| **Forum tidak terdeteksi** | Pastikan Anda sudah login ke portal Mentari |
+
+### Cara Melihat Log Error
+
+1. Buka `chrome://extensions/`
+2. Klik **"Service worker"** di bawah ekstensi SITREK Mentari
+3. Lihat tab **Console** untuk log detail
+
+---
+
+## ❓ FAQ
+
+### Q: Apakah ekstensi ini gratis?
+A: Ya, ekstensi ini gratis. Namun, Anda memerlukan API Key Gemini yang mungkin memiliki batas penggunaan gratis.
+
+### Q: Apakah data saya aman?
+A: Ya! Ekstensi ini tidak menyimpan kredensial Anda. Autentikasi menggunakan sesi yang sudah ada dari portal Mentari.
+
+### Q: Apakah ini melanggar kebijakan universitas?
+A: Ekstensi ini dirancang untuk membantu produktivitas akademik. Pengguna bertanggung jawab untuk mematuhi kebijakan integritas akademik universitas.
+
+### Q: Bagaimana cara melaporkan bug?
+A: Buka issue di GitHub repositori atau hubungi tim pengembang.
+
+### Q: Apakah mendukung browser lain?
+A: Saat ini hanya mendukung Chrome dan Edge (berbasis Chromium).
 
 ---
 
 ## ⚠️ Disclaimer
 
-This tool is intended for **educational and productivity purposes only**. Users are responsible for adhering to the university's academic integrity policies and terms of service. The developers are not liable for any misuse of this extension.
+Alat ini ditujukan untuk **tujuan edukasi dan produktivitas saja**. Pengguna bertanggung jawab untuk mematuhi kebijakan integritas akademik dan ketentuan layanan universitas. Pengembang tidak bertanggung jawab atas penyalahgunaan ekstensi ini.
 
 ---
 
-## 📄 License
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+---
+
+## 🤝 Kontribusi
+
+Kami welcome kontribusi! Silakan:
+
+1. Fork repositori ini
+2. Buat branch fitur (`git checkout -b fitur/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin fitur/AmazingFeature`)
+5. Buka Pull Request
+
+---
+
+## 📞 Dukungan
+
+Jika Anda membutuhkan bantuan:
+
+- **Email:** support@mentari.unpam.ac.id
+- **Website:** https://mentari.unpam.ac.id
+- **GitHub Issues:** [Link Issues](https://github.com/your-repo/sitrek-mentari/issues)
+
+---
+
+<div align="center">
+
+Dibuat dengan ❤️ oleh Tim Pengembang SITREK Mentari
+
+*Universitas Pamulang - 2026*
+
+</div>
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
