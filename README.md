@@ -36,21 +36,14 @@ Lacak progres diskusi Anda di semua mata kuliah dengan antarmuka **iOS Glassmorp
   - `∅ Kosong`: Pertemuan tanpa komponen forum.
 - **Navigasi Langsung:** Klik sembarang tombol untuk langsung menuju ke forum atau bagian pertemuan tertentu.
 
-### 2. 🤖 Integrasi Gemini AI
-Asisten AI terintegrasi untuk membantu Anda dalam studi.
-
-- **Jawaban Quiz Otomatis:** Selesaikan soal quiz secara otomatis dengan akurasi tinggi menggunakan Gemini 2.0 Flash.
-- **Asisten Forum:** Hasilkan respons dan pertanyaan berkualitas tinggi untuk forum diskusi.
-- **Chatbot Cerdas:** Antarmuka chat AI mengambang untuk pertanyaan akademik, mendukung memori konteks.
-
-### 3. 📊 Wawasan Akademik
+### 2. 📊 Wawasan Akademik
 Sinkronisasi data waktu nyata langsung dari API universitas.
 
 - **Monitor Absensi:** Lihat statistik kehadiran detail dan persentase.
 - **Ringkasan WhatsApp:** Hasilkan ringkasan pertemuan mingguan profesional yang diformat untuk grup kelas Anda dengan satu klik.
 - **Notifikasi Dosen:** Dapatkan pemberitahuan saat dosen membalas posting forum Anda.
 
-### 4. ⚡ Otomatisasi & Produktivitas
+### 3. ⚡ Otomatisasi & Produktivitas
 - **Isi Kuesioner Otomatis:** Selesaikan formulir evaluasi secara instan.
 - **Quick Survey:** Rating satu klik untuk survei KHS (mode Weighted/Random).
 - **Password Otomatis:** Asisten login cerdas untuk portal Mentari.
@@ -64,7 +57,6 @@ Sebelum menginstal ekstensi, pastikan Anda memiliki:
 | Persyaratan | Detail |
 |-------------|--------|
 | **Browser** | Google Chrome 88+ atau Microsoft Edge 88+ |
-| **API Key Gemini** | Akun Google AI Studio (gratis) |
 | **Akun Mentari** | Aktab mahasiswa aktif UNPAM |
 | **Koneksi Internet** | Stabil (disarankan) |
 
@@ -107,16 +99,7 @@ git clone https://github.com/your-repo/sitrek-mentari.git
 
 ## 📖 Cara Penggunaan
 
-### 🔑 Setup Asisten AI
-
-1. Buka [Mentari UNPAM](https://mentari.unpam.ac.id)
-2. Popup akan meminta **API Key Gemini** Anda
-3. Dapatkan kunci gratis dari [Google AI Studio](https://aistudio.google.com/app/apikey)
-4. Tempelkan kunci dan klik **Simpan**
-
-> **📌 Catatan:** API Key Gemini gratis dengan batas penggunaan tertentu. Untuk penggunaan intensif, pertimbangkan upgrade ke paket berbayar.
-
-### 🔄 Sinkronisasi Data
+###  Sinkronisasi Data
 
 1. Navigasi ke Dashboard Mentari
 2. Klik ikon **Refresh** (🔄) di Tracker UI
