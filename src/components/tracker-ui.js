@@ -3,6 +3,8 @@
  * Concept: Ethereal Dark / Vercel Aesthetics
  */
 export const trackerUI = {
+  activeTab: 'home',
+
   createContainer: () => {
     if (document.getElementById('mentari-tracker-root')) return document.getElementById('mentari-tracker-root');
 
@@ -20,7 +22,7 @@ export const trackerUI = {
             </div>
             <div class="brand-info">
               <span class="brand-name">SITREK <span class="accent">Mentari</span></span>
-              <span class="brand-tagline" id="last-sync">Neural Sync Ready</span>
+              <span class="brand-tagline" id="last-sync">System Sync Ready</span>
             </div>
           </div>
           <div class="tracker-actions">
@@ -33,16 +35,54 @@ export const trackerUI = {
           </div>
         </div>
 
+        <div class="tracker-tabs">
+          <button class="tracker-tab active" data-tab="home">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Forum
+          </button>
+          <button class="tracker-tab" data-tab="students">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Mahasiswa
+          </button>
+          <button class="tracker-tab" data-tab="notifications">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            Notifikasi
+          </button>
+        </div>
+
         <div class="tracker-content">
-          <div id="course-list" class="course-grid">
-            <div class="empty-state">
-              <div class="empty-visual">
-                <div class="blob"></div>
-                <div class="icon">📡</div>
+          <div id="tab-home" class="tab-pane active">
+            <div id="course-list" class="course-grid">
+              <div class="empty-state">
+                <div class="empty-visual">
+                  <div class="blob"></div>
+                  <div class="icon">📡</div>
+                </div>
+                <h3>No Signal Detected</h3>
+                <p>Please initiate neural synchronization to map your academic progress.</p>
+                <button class="prime-btn" onclick="document.getElementById('refresh-tracker').click()">Start Sync</button>
               </div>
-              <h3>No Signal Detected</h3>
-              <p>Please initiate neural synchronization to map your academic progress.</p>
-              <button class="prime-btn" onclick="document.getElementById('refresh-tracker').click()">Start Sync</button>
+            </div>
+          </div>
+          <div id="tab-students" class="tab-pane">
+            <div class="section-header-modern">
+              <h3>Daftar Mahasiswa</h3>
+              <span class="count-badge" id="student-count">0 Students</span>
+            </div>
+            <div id="student-list" class="student-grid">
+               <div class="empty-state">
+                <p>Sync data to view student list.</p>
+              </div>
+            </div>
+          </div>
+          <div id="tab-notifications" class="tab-pane">
+            <div class="section-header-modern">
+              <h3>Notifikasi</h3>
+            </div>
+            <div id="notifications-list" class="notif-grid">
+              <div class="empty-state">
+                <p>No new notifications detected.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -69,7 +109,32 @@ export const trackerUI = {
     `;
     document.body.appendChild(root);
     trackerUI.injectStyles();
+    trackerUI.initTabs();
     return root;
+  },
+
+  initTabs: () => {
+    const tabs = document.querySelectorAll('.tracker-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+        trackerUI.switchTab(target);
+      });
+    });
+  },
+
+  switchTab: (tabId) => {
+    trackerUI.activeTab = tabId;
+    
+    // Update tab buttons
+    document.querySelectorAll('.tracker-tab').forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-tab') === tabId);
+    });
+
+    // Update panes
+    document.querySelectorAll('.tab-pane').forEach(p => {
+      p.classList.toggle('active', p.id === `tab-${tabId}`);
+    });
   },
 
   injectStyles: () => {
@@ -81,13 +146,12 @@ export const trackerUI = {
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
 
       :root {
-        /* High-Contrast iOS Glassmorphism */
-        --ios-bg: rgba(20, 20, 22, 0.85); /* Darker for better text pop */
+        --ios-bg: rgba(20, 20, 22, 0.85);
         --ios-card: rgba(255, 255, 255, 0.06);
         --ios-border: rgba(255, 255, 255, 0.15);
-        --ios-accent: #0A84FF; /* Vibrant iOS Blue */
-        --ios-success: #30D158; /* Vibrant iOS Green */
-        --ios-warning: #FF9F0A; /* Vibrant iOS Orange */
+        --ios-accent: #0A84FF;
+        --ios-success: #30D158;
+        --ios-warning: #FF9F0A;
         --ios-text-main: #FFFFFF;
         --ios-text-secondary: rgba(255, 255, 255, 0.6);
         --ios-text-muted: rgba(255, 255, 255, 0.35);
@@ -129,28 +193,7 @@ export const trackerUI = {
         border-bottom: none;
       }
 
-      #mentari-tracker-app.tracker-collapsed .brand-visual {
-        width: 32px;
-        height: 32px;
-      }
-
-      #mentari-tracker-app.tracker-collapsed .brand-name {
-        font-size: 13px;
-      }
-
-      #mentari-tracker-app.tracker-collapsed .brand-tagline {
-        font-size: 8px;
-      }
-
-      #mentari-tracker-app.tracker-collapsed .tracker-actions {
-        gap: 4px;
-      }
-
-      #mentari-tracker-app.tracker-collapsed .action-btn {
-        width: 32px;
-        height: 32px;
-      }
-
+      #mentari-tracker-app.tracker-collapsed .tracker-tabs,
       #mentari-tracker-app.tracker-collapsed .tracker-content,
       #mentari-tracker-app.tracker-collapsed .tracker-status-bar {
         display: none;
@@ -194,31 +237,175 @@ export const trackerUI = {
         letter-spacing: 1px;
       }
 
-      .tracker-actions { display: flex; gap: 8px; }
+      .tracker-actions { 
+        display: flex; 
+        gap: 10px; 
+        align-items: center;
+      }
 
       .action-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: var(--ios-text-main);
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--ios-text-secondary);
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        position: relative;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+      }
+
+      .action-btn svg {
+        transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        filter: drop-shadow(0 0 0px var(--ios-accent));
+      }
+
+      .action-btn:hover {
+        background: rgba(10, 132, 255, 0.15);
+        border-color: rgba(10, 132, 255, 0.4);
+        color: var(--ios-accent);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(10, 132, 255, 0.3), 
+                    inset 0 1px 1px rgba(255,255,255,0.2);
+      }
+
+      .action-btn:hover svg {
+        filter: drop-shadow(0 0 5px var(--ios-accent));
+        transform: scale(1.1);
+      }
+
+      .action-btn:active {
+        transform: translateY(0) scale(0.95);
+      }
+
+      .sync-btn.loading svg {
+        animation: neural-spin 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        color: var(--ios-accent);
+      }
+
+      @keyframes neural-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .toggle-btn svg {
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      #mentari-tracker-app.tracker-collapsed .toggle-btn svg {
+        transform: rotate(180deg);
+      }
+
+      .tracker-tabs {
+        display: flex;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--ios-border);
+        gap: 8px;
+      }
+
+      .tracker-tab {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--ios-text-secondary);
+        padding: 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
         transition: all 0.3s;
       }
 
-      .action-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+      .tracker-tab:hover { background: rgba(255, 255, 255, 0.05); color: var(--ios-text-main); }
+      .tracker-tab.active { background: var(--ios-accent); color: white; }
 
       .tracker-content {
-        max-height: 480px;
+        height: 480px;
         overflow-y: auto;
         padding: 20px;
         scrollbar-width: thin;
         scrollbar-color: rgba(255,255,255,0.1) transparent;
       }
+
+      .tab-pane { display: none; }
+      .tab-pane.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .section-header-modern {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--ios-border);
+      }
+
+      .section-header-modern h3 { margin: 0; font-size: 18px; font-weight: 700; }
+      .count-badge {
+        background: rgba(255,255,255,0.1);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--ios-accent);
+      }
+
+      /* Student List Styling */
+      .student-card {
+        background: var(--ios-card);
+        border: 1px solid var(--ios-border);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .student-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #0A84FF, #30D158);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 12px;
+      }
+
+      .student-info { flex: 1; }
+      .student-name { font-weight: 700; font-size: 14px; display: block; }
+      .student-nim { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ios-text-secondary); }
+
+      /* Notif List Styling */
+      .notif-card {
+        background: var(--ios-card);
+        border-left: 4px solid var(--ios-accent);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+
+      .notif-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+      .notif-author { font-weight: 700; font-size: 13px; color: var(--ios-accent); }
+      .notif-time { font-size: 10px; color: var(--ios-text-muted); }
+      .notif-body { font-size: 12px; line-height: 1.4; color: var(--ios-text-secondary); }
 
       .course-card {
         background: var(--ios-card);
@@ -375,9 +562,7 @@ export const trackerUI = {
     }
 
     list.innerHTML = courses.map((course, cIdx) => {
-      // 1. Ambil semua section/pertemuan dari data
       const sections = course.data.map(section => {
-        // Cari forum di dalam section ini
         const forums = section.sub_section.filter(sub => sub.kode_template === "FORUM_DISKUSI");
         return {
           nama: section.nama_section,
@@ -388,13 +573,11 @@ export const trackerUI = {
 
       if (sections.length === 0) return '';
 
-      // 2. Hitung total forum vs yang selesai untuk progress
       const allForumsFlattened = sections.flatMap(s => s.forums);
       const totalForums = allForumsFlattened.length;
       const completedForums = allForumsFlattened.filter(f => f.completion === true).length;
       const progressPercent = totalForums > 0 ? Math.round((completedForums / totalForums) * 100) : 100;
 
-      // 3. Urutkan section berdasarkan nomor pertemuan
       sections.sort((a, b) => {
         const numA = parseInt(a.kode?.match(/\d+/)?.[0] || 0);
         const numB = parseInt(b.kode?.match(/\d+/)?.[0] || 0);
@@ -416,50 +599,24 @@ export const trackerUI = {
             ${sections.map((s, idx) => {
               const pMatch = s.kode?.match(/\d+/);
               const pLabel = pMatch ? `P${pMatch[0]}` : `S${idx + 1}`;
-              
-              // Jika TIDAK ADA forum di pertemuan ini
               if (s.forums.length === 0) {
-                return `
-                  <div class="forum-pill locked" title="Tidak ada forum di pertemuan ini" style="opacity: 0.5">
-                    ∅ ${pLabel}
-                  </div>
-                `;
+                return `<div class="forum-pill locked" title="Tidak ada forum" style="opacity: 0.5">∅ ${pLabel}</div>`;
               }
-
-              // Jika ADA forum (bisa lebih dari satu dalam satu pertemuan)
               return s.forums.map(f => {
                 let statusClass = '';
                 let icon = '';
                 let href = '';
-                
                 if (f.completion === true) {
-                  statusClass = 'completed';
-                  icon = '✓';
+                  statusClass = 'completed'; icon = '✓';
                   href = f.id ? `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}` : `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
                 } else if (f.id) {
-                  // Jika forum aktif (punya ID) tapi sudah diverifikasi kosong oleh user
-                  if (f.verified_empty) {
-                    statusClass = 'locked';
-                    icon = '∅';
-                    href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
-                  } else {
-                    statusClass = ''; // Pending
-                    icon = '○';
-                    href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
-                  }
+                  statusClass = ''; icon = '○';
+                  href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
                 } else {
-                  statusClass = 'locked';
-                  icon = '🔒';
+                  statusClass = 'locked'; icon = '🔒';
                   href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
                 }
-
-                return `
-                  <a href="${href}" 
-                     class="forum-pill ${statusClass}" 
-                     title="${f.verified_empty ? 'Verified Empty: ' : ''}${f.judul || 'Forum Diskusi'}">
-                    ${icon} ${pLabel}
-                  </a>
-                `;
+                return `<a href="${href}" class="forum-pill ${statusClass}" title="${f.judul || 'Forum Diskusi'}">${icon} ${pLabel}</a>`;
               }).join('');
             }).join('')}
           </div>
@@ -468,11 +625,54 @@ export const trackerUI = {
     }).join('');
   },
 
+  updateStudents: (students) => {
+    const container = document.getElementById('student-list');
+    const countBadge = document.getElementById('student-count');
+    if (!container) return;
+
+    if (!students || students.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>No students found.</p></div>';
+      if (countBadge) countBadge.innerText = '0 Students';
+      return;
+    }
+
+    if (countBadge) countBadge.innerText = `${students.length} Students`;
+
+    container.innerHTML = students.map(s => `
+      <div class="student-card">
+        <div class="student-avatar">${s.nama.charAt(0)}</div>
+        <div class="student-info">
+          <span class="student-name">${s.nama}</span>
+          <span class="student-nim">${s.nim}</span>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  updateNotifications: (notifs) => {
+    const container = document.getElementById('notifications-list');
+    if (!container) return;
+
+    if (!notifs || notifs.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>No new notifications detected.</p></div>';
+      return;
+    }
+
+    container.innerHTML = notifs.map(n => `
+      <div class="notif-card">
+        <div class="notif-header">
+          <span class="notif-author">${n.author}</span>
+          <span class="notif-time">${n.time}</span>
+        </div>
+        <div class="notif-body">${n.text}</div>
+      </div>
+    `).join('');
+  },
+
   setLoading: (isLoading) => {
     const progress = document.getElementById('tracker-progress');
     const syncBtn = document.getElementById('refresh-tracker');
     const statusText = document.getElementById('last-sync');
-    
     if (isLoading) {
       if (progress) progress.style.width = '70%';
       if (syncBtn) syncBtn.classList.add('loading');

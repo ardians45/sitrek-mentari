@@ -34,7 +34,7 @@
 
     // Trigger events untuk MUI
     ["change", "click", "input"].forEach((eventType) => {
-      radio.dispatchEvent(
+      radio.dispatchEvent(  
         new Event(eventType, {
           bubbles: true,
           cancelable: true,

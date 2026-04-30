@@ -3,8 +3,36 @@
  */
 import { storage, STORAGE_KEYS } from './storage.js';
 
+function decodeToken(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
 export function initInterceptor() {
   console.log("Mentari Tracker: Interceptor active.");
+
+  const saveTokenAndUser = (token) => {
+    if (!token) return;
+    const cleanToken = token.replace(/"/g, '');
+    storage.save(STORAGE_KEYS.AUTH_TOKEN, cleanToken);
+    
+    const payload = decodeToken(cleanToken);
+    if (payload) {
+      storage.save(STORAGE_KEYS.USER_INFO, {
+        id: payload.id,
+        username: payload.username || payload.nim,
+        name: payload.fullname || payload.name
+      });
+    }
+  };
 
   // Cegat Fetch API
   const originalFetch = window.fetch;
@@ -13,36 +41,32 @@ export function initInterceptor() {
     
     // Periksa header Authorization di request
     const options = args[1];
-    if (options && options.headers && (options.headers['Authorization'] || options.headers['authorization'])) {
-      const auth = options.headers['Authorization'] || options.headers['authorization'];
-      if (auth.startsWith('Bearer ')) {
-        const token = auth.split(' ')[1];
-        if (token) {
-          storage.save(STORAGE_KEYS.AUTH_TOKEN, token);
-          console.log("Mentari Tracker: Token captured from fetch.");
-        }
+    if (options && options.headers) {
+      let auth = null;
+      if (options.headers instanceof Headers) {
+        auth = options.headers.get('Authorization');
+      } else {
+        auth = options.headers['Authorization'] || options.headers['authorization'];
+      }
+      
+      if (auth && auth.startsWith('Bearer ')) {
+        saveTokenAndUser(auth.split(' ')[1]);
       }
     }
     return response;
   };
 
-  // Cegat XMLHttpRequest (beberapa request Mentari menggunakan ini)
+  // Cegat XMLHttpRequest
   const originalOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url, ...args) {
     this.addEventListener('load', function() {
-      // Kita tidak bisa baca request headers dari XHR setelah dikirim, 
-      // tapi kita bisa coba ambil dari localStorage jika Mentari menyimpannya
-      const rawToken = localStorage.getItem('token') || localStorage.getItem('accessToken');
-      if (rawToken) {
-          storage.save(STORAGE_KEYS.AUTH_TOKEN, rawToken.replace(/"/g, ''));
-      }
+      const rawToken = localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('mentari_auth_token');
+      if (rawToken) saveTokenAndUser(rawToken);
     });
     return originalOpen.apply(this, [method, url, ...args]);
   };
   
-  // Cara cadangan: Ambil langsung dari key bawaan Mentari jika ada
-  const mentariToken = localStorage.getItem('token');
-  if (mentariToken) {
-      storage.save(STORAGE_KEYS.AUTH_TOKEN, mentariToken.replace(/"/g, ''));
-  }
+  // Cara cadangan
+  const mentariToken = localStorage.getItem('token') || localStorage.getItem('mentari_auth_token');
+  if (mentariToken) saveTokenAndUser(mentariToken);
 }

@@ -10,7 +10,7 @@
     };
     (document.head || document.documentElement).appendChild(injectScript);
 
-    // 2. Muat logic utama
-    const src = chrome.runtime.getURL('src/content/main.js');
+    // 2. Muat logic utama dengan cache buster
+    const src = chrome.runtime.getURL('src/content/main.js') + '?t=' + Date.now();
     await import(src);
 })();

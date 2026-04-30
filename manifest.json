@@ -2,12 +2,11 @@
   "manifest_version": 3,
   "name": "SITREK Mentari",
   "version": "2.0.1",
-  "description": "Ekstensi untuk melacak forum diskusi Mentari UNPAM secara otomatis dengan asisten Gemini AI.",
+  "description": "Sistem pelacakan progres akademik otomatis untuk platform Mentari UNPAM.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://mentari.unpam.ac.id/*",
-    "https://my.unpam.ac.id/*",
-    "https://generativelanguage.googleapis.com/*"
+    "https://my.unpam.ac.id/*"
   ],
   "content_scripts": [
     {

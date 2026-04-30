@@ -5,6 +5,8 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: "mentari_auth_token",
   USER_INFO: "mentari_user_info",
   COURSE_DATA: "mentari_course_data",
+  STUDENT_DATA: "mentari_student_data",
+  NOTIFICATIONS: "mentari_notifications",
   LAST_UPDATE: "mentari_last_update",
   GEMINI_API_KEY: "geminiApiKey",
   GEMINI_ENABLED: "gemini_enabled",

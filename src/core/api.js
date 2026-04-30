@@ -44,7 +44,13 @@ export const api = {
 
   // Mengambil topik dalam sebuah forum
   getForumTopics: async (forumId) => {
-    const url = `https://mentari.unpam.ac.id/api/user-course-sub-section/forum-topic/${forumId}`;
+    const url = `https://mentari.unpam.ac.id/api/forum/topic/${forumId}`;
+    return api.fetchWithAuth(url);
+  },
+
+  // Mengambil balasan dalam sebuah topik forum
+  getForumReplies: async (topicId) => {
+    const url = `https://mentari.unpam.ac.id/api/forum/topic/reply/${topicId}`;
     return api.fetchWithAuth(url);
   }
 };
