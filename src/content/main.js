@@ -342,3 +342,6 @@ if (document.readyState === 'complete') {
 } else {
   window.addEventListener('load', initTracker);
 }
+
+// Ekspos ke window agar bisa dipanggil dari popup
+window.runToken = initTracker;
