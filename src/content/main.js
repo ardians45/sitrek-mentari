@@ -195,65 +195,84 @@ function toggleUI() {
 
 function generateWASummary() {
   const data = storage.get(STORAGE_KEYS.COURSE_DATA);
-  if (!data) return alert("Sync data first!");
+  if (!data) return alert("Sync data dulu!\n\nTekan tombol 🔄 untuk mengambil data terbaru.");
 
+  // Helper: nomor pertemuan → nomor pekan
   function getPekan(isIntensive, pert) {
     if (isIntensive) {
-      if (pert % 3 === 1) return Math.floor((pert - 1) / 3) * 2 + 1;
-      if (pert % 3 === 2) return Math.floor((pert - 2) / 3) * 2 + 1;
-      return (pert / 3) * 2;
+      // Pola Intensif (3 SKS): 
+      // Pekan ganjil (1, 3, 5) -> 1 pertemuan (pert 1, 4, 7, 10, 13)
+      // Pekan genap (2, 4, 6) -> 2 pertemuan (pert 2&3, 5&6, 8&9, 11&12, 14&15)
+      if (pert % 3 === 1) return Math.floor(pert / 3) * 2 + 1; // 1, 4, 7 -> 1, 3, 5
+      if (pert % 3 === 2) return Math.floor(pert / 3) * 2 + 2; // 2, 5, 8 -> 2, 4, 6
+      return (pert / 3) * 2; // 3, 6, 9 -> 2, 4, 6
     }
     return pert;
   }
 
+  // Helper: nomor pekan → pertemuan apa saja yang ada di pekan itu
   function getExpectedPerts(isIntensive, pekan) {
     if (isIntensive) {
-      if (pekan % 2 === 1) return [Math.floor((pekan - 1) / 2) * 3 + 1, Math.floor((pekan - 1) / 2) * 3 + 2];
-      return [(pekan / 2) * 3];
+      if (pekan % 2 === 1) { // Pekan ganjil
+        return [Math.floor((pekan - 1) / 2) * 3 + 1];
+      } else { // Pekan genap
+        return [
+          Math.floor((pekan - 2) / 2) * 3 + 2,
+          Math.floor((pekan - 2) / 2) * 3 + 3
+        ];
+      }
     }
     return [pekan];
   }
 
-  // 1. Ekstrak data dasar & kumpulkan voting Pekan
+  // Helper: apakah forum ini sudah dibuka? (termasuk yang belum diisi topik/Empty)
+  function isForumOpened(f) {
+    return f.kode_template === "FORUM_DISKUSI" &&
+           (f.id || f.id_trx_course_sub_section);
+  }
+
+  // 1. Ekstrak info tiap matkul & voting pekan
   const coursesInfo = data.map(course => {
     const sksMatch = course.coursename.match(/^\[(\d+)\]/);
     const sks = sksMatch ? parseInt(sksMatch[1]) : 0;
     const cleanName = course.coursename.split("#")[0].replace(/^\[\d+\]\s*/, '').trim().toUpperCase();
-    
+
     let maxPertNum = 0;
     course.data.forEach(s => {
       const match = s.kode_section.match(/\d+/);
       if (match) maxPertNum = Math.max(maxPertNum, parseInt(match[0]));
     });
     const isIntensive = maxPertNum > 14;
-    
-    const activePekans = new Set();
+
+    // Kumpulkan pekan-pekan yang sudah dibuka
+    const openedPekans = new Set();
     course.data.forEach(s => {
-      const forums = s.sub_section.filter(f => f.kode_template === "FORUM_DISKUSI" && (f.id || f.id_trx_course_sub_section));
-      if (forums.length > 0) {
+      const hasOpenedForum = s.sub_section.some(f => isForumOpened(f));
+      if (hasOpenedForum) {
         const match = s.kode_section.match(/\d+/);
         if (match) {
           const pertNum = parseInt(match[0]);
-          activePekans.add(getPekan(isIntensive, pertNum));
+          openedPekans.add(getPekan(isIntensive, pertNum));
         }
       }
     });
 
-    return { cleanName, sks, isIntensive, activePekans, originalData: course.data };
+    return { cleanName, sks, isIntensive, openedPekans, originalData: course.data };
   });
 
-  // 2. Tentukan Pekan Mayoritas (Active Week)
+  // 2. Voting: pekan mana yang paling banyak matkul aktifnya?
   const pekanVotes = {};
   coursesInfo.forEach(c => {
-    c.activePekans.forEach(p => {
+    c.openedPekans.forEach(p => {
       pekanVotes[p] = (pekanVotes[p] || 0) + 1;
     });
   });
 
   if (Object.keys(pekanVotes).length === 0) {
-    return alert("Tidak ada pertemuan aktif yang terdeteksi.");
+    return alert("Tidak ada pertemuan aktif terdeteksi.\n\n• Pastikan dosen sudah membuka forum diskusi\n• Coba tekan 🔄 untuk sync ulang");
   }
 
+  // Ambil pekan dengan voting tertinggi (jika seri, ambil yang lebih besar = lebih baru)
   let majorityWeek = 1;
   let maxVotes = 0;
   for (const p in pekanVotes) {
@@ -265,76 +284,72 @@ function generateWASummary() {
     }
   }
 
-  // 3. Pengelompokan Data berdasarkan majorityWeek
-  const offline = [];
-  const online = [];
+  // 3. Bangun daftar matkul yang aktif di pekan ini
+  const activeCourses = [];
   let totalSks = 0;
 
   coursesInfo.forEach(c => {
     const expectedPerts = getExpectedPerts(c.isIntensive, majorityWeek);
-    
+
     const activePertsThisWeek = [];
+    let hasEmpty = false;
+
     expectedPerts.forEach(pert => {
       const section = c.originalData.find(s => {
         const m = s.kode_section.match(/\d+/);
         return m && parseInt(m[0]) === pert;
       });
       if (section) {
-        const isActive = section.sub_section.some(f => f.kode_template === "FORUM_DISKUSI" && (f.id || f.id_trx_course_sub_section));
-        if (isActive) {
+        const forums = section.sub_section.filter(f => isForumOpened(f));
+        if (forums.length > 0) {
           activePertsThisWeek.push(pert);
+          if (forums.some(f => f.hasTopics === false)) {
+            hasEmpty = true;
+          }
         }
       }
     });
 
-    const formatPerts = (pertsArray) => {
-      const perts = [...pertsArray];
-      if (perts.length === 0) return '';
-      if (perts.length === 1) return `*pert ${perts[0]}*`;
-      if (perts.length === 2) return `*pert ${perts[0]} & ${perts[1]}*`;
-      const last = perts.pop();
-      return `*pert ${perts.join(', ')} & ${last}*`;
-    };
-
     if (activePertsThisWeek.length > 0) {
-      // ONLINE
-      const pertText = formatPerts(activePertsThisWeek);
-      online.push(`${c.cleanName} : ${pertText}\nSKS ${c.sks}`);
-      totalSks += c.sks;
-    } else {
-      // OFFLINE
-      const existingExpectedPerts = expectedPerts.filter(pert => 
-        c.originalData.some(s => {
-          const m = s.kode_section.match(/\d+/);
-          return m && parseInt(m[0]) === pert;
-        })
-      );
-      const pertText = formatPerts(existingExpectedPerts);
-      const titleLine = pertText ? `${c.cleanName} : ${pertText}` : `${c.cleanName} :`;
-      offline.push(`${titleLine}\nSKS ${c.sks}`);
+      // Format teks pertemuan: "pert 8", "pert 4 & 5", dll
+      const perts = activePertsThisWeek;
+      let pertText;
+      if (perts.length === 1) pertText = `*pert ${perts[0]}*`;
+      else if (perts.length === 2) pertText = `*pert ${perts[0]} & ${perts[1]}*`;
+      else {
+        const last = perts[perts.length - 1];
+        pertText = `*pert ${perts.slice(0, -1).join(', ')} & ${last}*`;
+      }
+      
+      if (hasEmpty) {
+        pertText += ` _(Belum ada topik)_`;
+      }
+
+      activeCourses.push({ name: c.cleanName, sks: c.sks, pertText });
       totalSks += c.sks;
     }
   });
 
-  // 4. Bangun format teks
-  let text = `*MATKUL PEKAN ${majorityWeek}*\n\n`;
-  
-  text += "*OFFLINE :*\n";
-  if (offline.length > 0) {
-    text += offline.join("\n\n") + "\n\n";
-  } else {
-    text += "_Tidak ada kelas offline_\n\n";
+  if (activeCourses.length === 0) {
+    return alert(`Tidak ada matkul aktif di Pekan ${majorityWeek}.\n\nCoba sync ulang nanti.`);
   }
 
-  text += "*ONLINE :*\n";
-  if (online.length > 0) {
-    text += online.join("\n\n") + "\n\n";
-  } else {
-    text += "_Tidak ada kelas online_\n\n";
-  }
+  // 4. Format teks output WA
+  const today = new Date();
+  const days    = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months  = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const dateStr = `${days[today.getDay()]}, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+
+  let text = `*MATKUL PEKAN ${majorityWeek}*\n`;
+  text += `_${dateStr}_\n\n`;
+
+  activeCourses.forEach((c, i) => {
+    text += `${i + 1}. *${c.name}*\n`;
+    text += `   ${c.pertText} | SKS ${c.sks}\n\n`;
+  });
 
   text += `*TOTAL SKS: ${totalSks}*\n\n`;
-  text += "*NOTED :* ";
+  text += `*NOTED :* `;
 
   const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
   window.open(waUrl, '_blank');

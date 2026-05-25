@@ -121,7 +121,7 @@ Pengujian dilakukan menggunakan pendekatan **Black Box Testing** (berfokus pada 
 | **Pengecekan Modul (Reguler)** | Modul menampilkan 14 kali pertemuan standar. | UI merender *pill* P1 - P14 dengan indikator warna sesuai *server*. | ✅ LULUS |
 | **Pengecekan Modul (Intensif)** | Modul mampu membaca lebih dari 14 pertemuan. | Algoritma ekstensi mampu membaca anomali pertemuan (mis. Kelas eksekutif/intensif). | ✅ LULUS |
 | **Sortir Nama Mahasiswa** | Daftar teman diurutkan berdasar Abjad A-Z dan diberikan No Absen (1, 2, 3..). | Fungsi `.sort()` dan `.localeCompare()` merender urutan nomor absen secara akurat. | ✅ LULUS |
-| **Otomasi WA Summary** | Membuat rekapan pertemuan mana yang Luring vs Daring berdasarkan logika hitungan pekan. | Pesan dikonversi menjadi format WhatsApp (tebal/miring) dan langsung diarahkan ke *WhatsApp Web*. | ✅ LULUS |
+| **Otomasi WA Summary** | Merangkum semua mata kuliah aktif di pekan berjalan yang sudah memiliki topik diskusi (mengecualikan forum kosong/Empty). | Pesan dikonversi menjadi format WhatsApp (tebal/miring) lengkap dengan tanggal dan total SKS, lalu diarahkan ke *WhatsApp Web*. | ✅ LULUS |
 
 Secara keseluruhan, ekstensi terbukti sangat handal (tingkat keberhasilan 100% pada aspek pelacakan forum dan fitur esensial) tanpa membebani performa *browser*.
 
@@ -176,8 +176,8 @@ Tata letak utama dipecah menjadi tiga wilayah navigasi (*Tab*):
 **Skenario 2: Menggunakan Fitur Kompilator WhatsApp**
 1. Saat rapat kelompok atau saat diminta informasi jadwal pekanan, buka panel SITREK.
 2. Temukan pita status bagian terbawah yang berwarna kuning bertuliskan tombol "**SUMMARY**".
-3. Ekstensi akan menganalisis algoritma pertemuan kelas luring (offline) vs daring (online) Anda saat ini.
-4. Tab baru WhatsApp Web akan segera diluncurkan lengkap dengan teks terstruktur yang sudah merangkum semua mata kuliah di pekan aktif. Anda cukup tekan tombol *Kirim/Send*.
+3. Klik tombol tersebut untuk mengekstrak ringkasan dari daftar mata kuliah aktif di pekan ini.
+4. Tab baru WhatsApp Web akan segera diluncurkan lengkap dengan teks terstruktur yang sudah merangkum semua mata kuliah di pekan aktif (nama matkul, pertemuan ke-berapa, jumlah SKS, dan total SKS). Anda cukup tekan tombol *Kirim/Send*.
 
 ### 10. Fitur Lanjutan dan Administrasi
 
