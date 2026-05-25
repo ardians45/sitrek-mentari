@@ -1,6 +1,6 @@
 /**
  * Tracker UI - SITREK Mentari (Awwwards Edition)
- * Concept: Ethereal Dark / Vercel Aesthetics
+ * Concept: Neoburatlism
  */
 export const trackerUI = {
   activeTab: 'home',
@@ -136,26 +136,26 @@ export const trackerUI = {
       p.classList.toggle('active', p.id === `tab-${tabId}`);
     });
   },
-
   injectStyles: () => {
     if (document.getElementById('tracker-styles-awwwards')) return;
     const style = document.createElement('style');
     style.id = 'tracker-styles-awwwards';
     style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap');
 
       :root {
-        --ios-bg: rgba(20, 20, 22, 0.85);
-        --ios-card: rgba(255, 255, 255, 0.06);
-        --ios-border: rgba(255, 255, 255, 0.15);
-        --ios-accent: #0A84FF;
-        --ios-success: #30D158;
-        --ios-warning: #FF9F0A;
-        --ios-text-main: #FFFFFF;
-        --ios-text-secondary: rgba(255, 255, 255, 0.6);
-        --ios-text-muted: rgba(255, 255, 255, 0.35);
-        --ios-blur: blur(30px) saturate(200%);
+        --neo-bg: #EAEAEA;
+        --neo-card: #FFFFFF;
+        --neo-border: #000000;
+        --neo-accent: #FFEB3B;
+        --neo-accent-2: #00E5FF;
+        --neo-success: #00E676;
+        --neo-warning: #FF3D00;
+        --neo-text-main: #000000;
+        --neo-text-secondary: #333333;
+        --neo-text-muted: #666666;
+        --shadow-color: #000000;
       }
 
       #mentari-tracker-root {
@@ -166,25 +166,49 @@ export const trackerUI = {
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       }
 
+      #mentari-tracker-root, #mentari-tracker-root * {
+        box-sizing: border-box;
+      }
+
       #mentari-tracker-app {
-        width: 440px;
-        background: var(--ios-bg);
-        backdrop-filter: var(--ios-blur);
-        -webkit-backdrop-filter: var(--ios-blur);
-        border: 1px solid var(--ios-border);
-        border-radius: 32px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-        overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        color: var(--ios-text-main);
+        width: 100%;
+        min-width: 320px;
+        max-width: 440px;
+        background: var(--neo-bg);
+        border: 4px solid var(--neo-border);
+        border-radius: 0;
+        box-shadow: 8px 8px 0px var(--shadow-color);
+        transition: all 0.3s ease;
+        color: var(--neo-text-main);
         display: flex;
         flex-direction: column;
+        max-height: calc(100vh - 60px);
+      }
+
+      /* Make responsive */
+      @media (max-width: 500px) {
+        #mentari-tracker-root {
+          bottom: 10px;
+          right: 10px;
+          left: 10px;
+        }
+        #mentari-tracker-app {
+          width: auto;
+          max-width: none;
+        }
       }
 
       #mentari-tracker-app.tracker-collapsed {
-        width: 260px;
+        width: max-content;
+        min-width: 300px;
         height: 72px;
-        border-radius: 40px;
+        border-radius: 0;
+      }
+      
+      @media (max-width: 500px) {
+        #mentari-tracker-app.tracker-collapsed {
+           width: auto;
+        }
       }
 
       #mentari-tracker-app.tracker-collapsed .tracker-header {
@@ -204,35 +228,36 @@ export const trackerUI = {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: rgba(255, 255, 255, 0.03);
-        border-bottom: 1px solid var(--ios-border);
+        background: var(--neo-accent-2);
+        border-bottom: 4px solid var(--neo-border);
         cursor: pointer;
         user-select: none;
+        flex-shrink: 0;
       }
 
       .tracker-brand { display: flex; align-items: center; gap: 12px; }
 
       .brand-visual {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         background: #fff;
-        border-radius: 12px;
+        border: 3px solid var(--neo-border);
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 4px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 3px 3px 0px var(--shadow-color);
       }
 
       .brand-visual img { width: 100%; height: 100%; object-fit: contain; }
 
       .brand-info { display: flex; flex-direction: column; }
-      .brand-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
-      .brand-name .accent { color: var(--ios-accent); filter: drop-shadow(0 0 8px var(--ios-accent)); }
+      .brand-name { font-weight: 900; font-size: 18px; letter-spacing: -0.5px; text-transform: uppercase; }
+      .brand-name .accent { color: #fff; text-shadow: 2px 2px 0 #000; background: #000; padding: 0 4px;}
       .brand-tagline { 
-        font-size: 10px; 
-        color: var(--ios-text-secondary); 
-        font-weight: 700; 
+        font-size: 11px; 
+        color: var(--neo-text-main); 
+        font-weight: 800; 
         text-transform: uppercase; 
         letter-spacing: 1px;
       }
@@ -244,49 +269,37 @@ export const trackerUI = {
       }
 
       .action-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--ios-text-secondary);
-        width: 38px;
-        height: 38px;
-        border-radius: 14px;
+        background: #fff;
+        border: 3px solid var(--neo-border);
+        color: var(--neo-text-main);
+        width: 42px;
+        height: 42px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-        position: relative;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        transition: all 0.1s ease;
+        box-shadow: 4px 4px 0px var(--shadow-color);
       }
 
       .action-btn svg {
-        transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-        filter: drop-shadow(0 0 0px var(--ios-accent));
+        transition: all 0.1s ease;
+        stroke-width: 3;
       }
 
       .action-btn:hover {
-        background: rgba(10, 132, 255, 0.15);
-        border-color: rgba(10, 132, 255, 0.4);
-        color: var(--ios-accent);
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 10px 25px rgba(10, 132, 255, 0.3), 
-                    inset 0 1px 1px rgba(255,255,255,0.2);
-      }
-
-      .action-btn:hover svg {
-        filter: drop-shadow(0 0 5px var(--ios-accent));
-        transform: scale(1.1);
+        background: var(--neo-accent);
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px var(--shadow-color);
       }
 
       .action-btn:active {
-        transform: translateY(0) scale(0.95);
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px var(--shadow-color);
       }
 
       .sync-btn.loading svg {
-        animation: neural-spin 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-        color: var(--ios-accent);
+        animation: neural-spin 1.2s linear infinite;
       }
 
       @keyframes neural-spin {
@@ -295,7 +308,7 @@ export const trackerUI = {
       }
 
       .toggle-btn svg {
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.3s ease;
       }
 
       #mentari-tracker-app.tracker-collapsed .toggle-btn svg {
@@ -304,239 +317,309 @@ export const trackerUI = {
 
       .tracker-tabs {
         display: flex;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.02);
-        border-bottom: 1px solid var(--ios-border);
-        gap: 8px;
+        padding: 12px 16px;
+        background: #fff;
+        border-bottom: 4px solid var(--neo-border);
+        gap: 12px;
+        overflow-x: auto;
+        flex-shrink: 0;
       }
 
       .tracker-tab {
         flex: 1;
-        background: transparent;
-        border: none;
-        color: var(--ios-text-secondary);
-        padding: 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
+        min-width: 100px;
+        background: #fff;
+        border: 3px solid var(--neo-border);
+        color: var(--neo-text-main);
+        padding: 10px;
+        font-size: 13px;
+        font-weight: 800;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
-        transition: all 0.3s;
+        transition: all 0.1s;
+        box-shadow: 3px 3px 0px var(--shadow-color);
+        text-transform: uppercase;
       }
 
-      .tracker-tab:hover { background: rgba(255, 255, 255, 0.05); color: var(--ios-text-main); }
-      .tracker-tab.active { background: var(--ios-accent); color: white; }
+      .tracker-tab:hover { 
+        background: #f0f0f0; 
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px var(--shadow-color);
+      }
+      .tracker-tab svg {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        stroke-width: 2.5;
+      }
+      .tracker-tab.active { 
+        background: var(--neo-accent); 
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px var(--shadow-color);
+      }
 
       .tracker-content {
         height: 480px;
+        flex: 1;
+        min-height: 0;
         overflow-y: auto;
-        padding: 20px;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(255,255,255,0.1) transparent;
+        overflow-x: hidden;
+        padding: 24px;
+        padding-right: 28px; /* Extra padding for scrollbar shadow */
+        background: var(--neo-bg);
+      }
+      
+      /* Scrollbar for brutalism */
+      .tracker-content::-webkit-scrollbar {
+        width: 12px;
+      }
+      .tracker-content::-webkit-scrollbar-track {
+        background: #fff;
+        border-left: 3px solid var(--neo-border);
+      }
+      .tracker-content::-webkit-scrollbar-thumb {
+        background: var(--neo-accent);
+        border: 3px solid var(--neo-border);
       }
 
       .tab-pane { display: none; }
-      .tab-pane.active { display: block; animation: fadeIn 0.4s ease-out; }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
+      .tab-pane.active { display: block; }
 
       .section-header-modern {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
         padding-bottom: 12px;
-        border-bottom: 1px solid var(--ios-border);
+        border-bottom: 4px solid var(--neo-border);
       }
 
-      .section-header-modern h3 { margin: 0; font-size: 18px; font-weight: 700; }
+      .section-header-modern h3 { margin: 0; font-size: 20px; font-weight: 900; text-transform: uppercase;}
       .count-badge {
-        background: rgba(255,255,255,0.1);
+        background: var(--neo-accent);
+        border: 2px solid var(--neo-border);
         padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--ios-accent);
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--neo-text-main);
+        box-shadow: 2px 2px 0px var(--shadow-color);
       }
 
       /* Student List Styling */
       .student-card {
-        background: var(--ios-card);
-        border: 1px solid var(--ios-border);
-        border-radius: 16px;
-        padding: 14px;
-        margin-bottom: 10px;
+        background: var(--neo-card);
+        border: 3px solid var(--neo-border);
+        padding: 16px;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
         gap: 15px;
+        box-shadow: 4px 4px 0px var(--shadow-color);
+        transition: transform 0.1s;
+      }
+      
+      .student-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px var(--shadow-color);
       }
 
       .student-avatar {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, #0A84FF, #30D158);
-        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        background: var(--neo-accent-2);
+        border: 2px solid var(--neo-border);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
-        font-size: 12px;
+        font-weight: 900;
+        font-size: 16px;
+        box-shadow: 2px 2px 0px var(--shadow-color);
       }
 
       .student-info { flex: 1; }
-      .student-name { font-weight: 700; font-size: 14px; display: block; }
-      .student-nim { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ios-text-secondary); }
+      .student-name { font-weight: 800; font-size: 16px; display: block; text-transform: uppercase; }
+      .student-nim { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--neo-text-secondary); background: #eee; padding: 2px 6px; border: 1px solid #000; display: inline-block; margin-top: 4px;}
 
       /* Notif List Styling */
       .notif-card {
-        background: var(--ios-card);
-        border-left: 4px solid var(--ios-accent);
-        border-radius: 12px;
-        padding: 14px;
-        margin-bottom: 12px;
+        background: var(--neo-card);
+        border: 3px solid var(--neo-border);
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 4px 4px 0px var(--shadow-color);
       }
 
-      .notif-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-      .notif-author { font-weight: 700; font-size: 13px; color: var(--ios-accent); }
-      .notif-time { font-size: 10px; color: var(--ios-text-muted); }
-      .notif-body { font-size: 12px; line-height: 1.4; color: var(--ios-text-secondary); }
+      .notif-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 2px solid #000; padding-bottom: 8px;}
+      .notif-author { font-weight: 800; font-size: 14px; text-transform: uppercase;}
+      .notif-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; background: var(--neo-accent); padding: 2px 6px; border: 1px solid #000; }
+      .notif-body { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--neo-text-secondary); }
 
       .course-card {
-        background: var(--ios-card);
-        border: 1px solid var(--ios-border);
-        border-radius: 24px;
-        padding: 18px;
-        margin-bottom: 16px;
-        transition: transform 0.3s ease;
+        background: var(--neo-card);
+        border: 4px solid var(--neo-border);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.1s ease;
+        box-shadow: 6px 6px 0px var(--shadow-color);
       }
 
       .course-card:hover {
-        background: rgba(255, 255, 255, 0.09);
-        border-color: rgba(255, 255, 255, 0.25);
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px var(--shadow-color);
       }
 
       .course-header-row {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         gap: 12px;
+        border-bottom: 3px solid var(--neo-border);
+        padding-bottom: 12px;
       }
 
       .course-title { 
-        font-weight: 700; 
-        font-size: 14px; 
-        color: var(--ios-text-main);
-        line-height: 1.5;
+        font-weight: 900; 
+        font-size: 16px; 
+        color: var(--neo-text-main);
+        line-height: 1.4;
         flex: 1;
+        text-transform: uppercase;
       }
       
       .course-progress {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        min-width: 50px;
+        min-width: 60px;
+        margin-right: 4px;
       }
       .progress-label { 
         font-family: 'JetBrains Mono', monospace;
-        font-size: 11px; 
-        font-weight: 800; 
-        color: var(--ios-accent);
+        font-size: 14px; 
+        font-weight: 900; 
+        color: #fff;
+        background: #000;
+        padding: 2px 6px;
       }
-      .progress-bar-bg { width: 44px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-top: 4px; }
-      .progress-bar-fill { height: 100%; background: var(--ios-accent); border-radius: 3px; transition: width 1s ease; }
+      .progress-bar-bg { width: 60px; height: 12px; background: #fff; border: 2px solid var(--neo-border); margin-top: 6px; }
+      .progress-bar-fill { height: 100%; background: var(--neo-success); border-right: 2px solid var(--neo-border); transition: width 0.3s ease; }
 
-      .forum-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+      .forum-pills { display: flex; flex-wrap: wrap; gap: 10px; }
 
       .forum-pill {
         padding: 8px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 800;
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 6px;
-        transition: all 0.2s;
-        border: 1px solid transparent;
-        color: var(--ios-text-secondary);
-        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.1s;
+        border: 2px solid var(--neo-border);
+        color: var(--neo-text-main);
+        background: #fff;
+        box-shadow: 3px 3px 0px var(--shadow-color);
       }
 
       .forum-pill.completed {
-        background: rgba(48, 209, 88, 0.2);
-        color: #30D158;
-        border-color: rgba(48, 209, 88, 0.3);
+        background: var(--neo-success);
       }
 
       .forum-pill.locked {
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--ios-text-muted);
-        border-color: rgba(255, 255, 255, 0.05);
+        background: #ccc;
+        color: #666;
       }
 
       .forum-pill:not(.completed):not(.locked) {
-        background: rgba(255, 159, 10, 0.2);
-        color: #FF9F0A;
-        border-color: rgba(255, 159, 10, 0.3);
+        background: var(--neo-warning);
+        color: #fff;
       }
 
       .forum-pill:hover:not(.locked) {
-        transform: scale(1.05);
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0px var(--shadow-color);
+      }
+      
+      .forum-pill:active:not(.locked) {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px var(--shadow-color);
       }
 
       .tracker-status-bar {
         padding: 16px 24px;
-        background: rgba(0, 0, 0, 0.2);
+        background: #fff;
         display: flex;
         align-items: center;
-        gap: 14px;
-        border-top: 1px solid var(--ios-border);
+        gap: 16px;
+        border-top: 4px solid var(--neo-border);
+        flex-shrink: 0;
       }
 
-      .status-item { display: flex; align-items: center; gap: 6px; }
-      .dot { width: 8px; height: 8px; border-radius: 50%; }
-      .dot.green { background: var(--ios-success); box-shadow: 0 0 10px var(--ios-success); }
-      .dot.orange { background: var(--ios-warning); box-shadow: 0 0 10px var(--ios-warning); }
-      .dot.gray { background: var(--ios-text-muted); }
+      .status-item { display: flex; align-items: center; gap: 8px; }
+      .dot { width: 12px; height: 12px; border: 2px solid #000; }
+      .dot.green { background: var(--neo-success); }
+      .dot.orange { background: var(--neo-warning); }
+      .dot.gray { background: #ccc; }
       .status-item .label { 
-        font-size: 11px; 
-        font-weight: 700; 
-        color: var(--ios-text-secondary); 
+        font-size: 13px; 
+        font-weight: 800; 
+        color: var(--neo-text-main); 
+        text-transform: uppercase;
       }
 
       .share-btn {
         margin-left: auto;
-        background: var(--ios-accent);
+        background: #000;
         color: #fff;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 18px;
-        font-size: 11px;
-        font-weight: 800;
+        border: 2px solid #000;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
         display: flex;
         align-items: center;
         gap: 8px;
         cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4);
+        transition: all 0.1s;
+        box-shadow: 4px 4px 0px var(--neo-accent);
       }
 
-      .share-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+      .share-btn:hover { 
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px var(--neo-accent);
+      }
+      
+      .share-btn:active { 
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px var(--neo-accent);
+      }
 
-      .empty-state { text-align: center; padding: 60px 20px; color: var(--ios-text-secondary); }
+      .empty-state { text-align: center; padding: 60px 20px; color: var(--neo-text-main); border: 4px dashed var(--neo-border); background: #fff; box-shadow: 8px 8px 0px var(--shadow-color); margin: 20px 0;}
+      .empty-state h3 { font-weight: 900; text-transform: uppercase; font-size: 22px; margin-bottom: 10px; }
+      .empty-state p { font-weight: 600; margin-bottom: 20px; }
       .prime-btn {
-        background: var(--ios-accent);
-        color: white; border: none; padding: 14px 30px; border-radius: 20px; font-size: 14px;
-        font-weight: 700; cursor: pointer; transition: all 0.3s;
+        background: var(--neo-accent-2);
+        color: #000; 
+        border: 3px solid #000; 
+        padding: 14px 30px; 
+        font-size: 16px;
+        font-weight: 900; 
+        text-transform: uppercase;
+        cursor: pointer; 
+        transition: all 0.1s;
+        box-shadow: 6px 6px 0px #000;
+      }
+      .prime-btn:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px #000;
+      }
+      .prime-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px #000;
       }
     `;
     document.head.appendChild(style);
@@ -600,20 +683,24 @@ export const trackerUI = {
               const pMatch = s.kode?.match(/\d+/);
               const pLabel = pMatch ? `P${pMatch[0]}` : `S${idx + 1}`;
               if (s.forums.length === 0) {
-                return `<div class="forum-pill locked" title="Tidak ada forum" style="opacity: 0.5">∅ ${pLabel}</div>`;
+                const emptyIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>';
+                return `<div class="forum-pill locked" title="Tidak ada forum" style="opacity: 0.5">${emptyIcon} ${pLabel}</div>`;
               }
               return s.forums.map(f => {
                 let statusClass = '';
                 let icon = '';
                 let href = '';
                 if (f.completion === true) {
-                  statusClass = 'completed'; icon = '✓';
+                  statusClass = 'completed'; 
+                  icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
                   href = f.id ? `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}` : `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
                 } else if (f.id) {
-                  statusClass = ''; icon = '○';
+                  statusClass = ''; 
+                  icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
                   href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
                 } else {
-                  statusClass = 'locked'; icon = '🔒';
+                  statusClass = 'locked'; 
+                  icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
                   href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
                 }
                 return `<a href="${href}" class="forum-pill ${statusClass}" title="${f.judul || 'Forum Diskusi'}">${icon} ${pLabel}</a>`;
