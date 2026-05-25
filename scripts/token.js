@@ -1424,21 +1424,6 @@ const APP_VERSION = "1.9";
             </div>
           </div>
 
-          <div class="token-data-item">
-            <div class="token-info-section">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <p><span class="token-key">Auto Finish Quiz :</span></p>
-                <label class="switch">
-                  <input type="checkbox" id="auto-finish-quiz-toggle" ${
-                    localStorage.getItem("auto_finish_quiz") === "true"
-                      ? "checked"
-                      : ""
-                  }>
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
-          </div>
 
 
           <div class="token-data-item version-info">
@@ -1527,17 +1512,6 @@ const APP_VERSION = "1.9";
       });
     }
 
-    // Toggle Auto Selesai Quiz
-    const autoFinishQuizToggle = document.getElementById(
-      "auto-finish-quiz-toggle"
-    );
-    if (autoFinishQuizToggle) {
-      autoFinishQuizToggle.checked =
-        localStorage.getItem("auto_finish_quiz") === "true";
-      autoFinishQuizToggle.addEventListener("change", function () {
-        localStorage.setItem("auto_finish_quiz", this.checked);
-      });
-    }
 
     // Add click event to toggle button to show chat interface
     const geminiToggleBtn = document.getElementById("geminiChatbotToggle");
