@@ -725,9 +725,11 @@ export const trackerUI = {
 
     if (countBadge) countBadge.innerText = `${students.length} Students`;
 
-    container.innerHTML = students.map(s => `
+    const sortedStudents = [...students].sort((a, b) => a.nama.localeCompare(b.nama));
+
+    container.innerHTML = sortedStudents.map((s, index) => `
       <div class="student-card">
-        <div class="student-avatar">${s.nama.charAt(0)}</div>
+        <div class="student-avatar">${index + 1}</div>
         <div class="student-info">
           <span class="student-name">${s.nama}</span>
           <span class="student-nim">${s.nim}</span>
