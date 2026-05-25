@@ -88,10 +88,7 @@ Dashboard rekapitulasi kehadiran yang komprehensif.
 
 | Fitur | Deskripsi |
 |-------|-----------|
-| **Quick Survey** | Otomasi pengisian kuisioner dosen di halaman KHS dengan rating 1-5 bintang |
-| **Auto-Fill Kuesioner** | Klik otomatis radio button evaluasi dosen dan submit |
 | **Smart Login** | Generate password default dari NIM dan custom background login page |
-| **Gemini AI Chatbot** | AI assistant berbasis Google Gemini untuk membantu belajar |
 | **Version Checker** | Cek update versi terbaru langsung dari GitHub Releases |
 
 ---
