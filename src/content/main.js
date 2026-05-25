@@ -103,8 +103,8 @@ async function syncData() {
             });
           }
 
-          // Fetch Notifications (Replies to my posts)
-          const activeForums = detail.data.flatMap(section => 
+          // Fetch topics: tag hasTopics on each forum + collect notifications
+          const activeForums = detail.data.flatMap(section =>
             section.sub_section.filter(sub => sub.kode_template === "FORUM_DISKUSI")
           );
 
@@ -113,23 +113,28 @@ async function syncData() {
             if (!forumId) continue;
 
             try {
-              const topics = await api.getForumTopics(forumId);
-              if (topics && topics.data) {
-                for (const topic of topics.data) {
+              const topicsResponse = await api.getForumTopics(forumId);
+              const topicsData = topicsResponse?.data || topicsResponse?.topics || [];
+
+              // Tag the forum object so tracker-ui can render the correct status
+              forum.hasTopics = Array.isArray(topicsData) && topicsData.length > 0;
+
+              if (forum.hasTopics) {
+                for (const topic of topicsData) {
                   try {
                     const replies = await api.getForumReplies(topic.id);
                     if (replies && Array.isArray(replies)) {
                       replies.forEach(reply => {
                         const isFromMe = (reply.username === myNim || reply.nim === myNim);
                         const isLecturer = reply.id_dosen !== null;
-                        
+
                         if (!isFromMe && (isLecturer || reply.is_reply_to_me)) {
-                           notifications.push({
-                             author: isLecturer ? (reply.dosen?.nama_gelar || reply.dosen?.nama_dosen || "Dosen") : (reply.nama_mahasiswa || reply.nama || "Teman"),
-                             time: new Date(reply.createdAt).toLocaleString(),
-                             text: reply.konten ? reply.konten.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : "Melihat balasan baru",
-                             type: isLecturer ? 'lecturer' : 'friend'
-                           });
+                          notifications.push({
+                            author: isLecturer ? (reply.dosen?.nama_gelar || reply.dosen?.nama_dosen || "Dosen") : (reply.nama_mahasiswa || reply.nama || "Teman"),
+                            time: new Date(reply.createdAt).toLocaleString(),
+                            text: reply.konten ? reply.konten.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : "Melihat balasan baru",
+                            type: isLecturer ? 'lecturer' : 'friend'
+                          });
                         }
                       });
                     }
@@ -139,10 +144,9 @@ async function syncData() {
                 }
               }
             } catch (err) {
-              // Gracefully handle 404 or other forum errors
-              if (err.message.includes('404')) {
-                console.log(`Forum ${forumId} topics not found (404) - likely empty.`);
-              } else {
+              // Forum with no topics may return 404 — treat as empty (no topics yet)
+              forum.hasTopics = false;
+              if (!err.message.includes('404')) {
                 console.warn(`Failed to fetch topics for forum ${forumId}`, err);
               }
             }

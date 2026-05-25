@@ -97,6 +97,10 @@ export const trackerUI = {
             <span class="label">Wait</span>
           </div>
           <div class="status-item">
+            <span class="dot yellow"></span>
+            <span class="label">Empty</span>
+          </div>
+          <div class="status-item">
             <span class="dot gray"></span>
             <span class="label">Locked</span>
           </div>
@@ -534,9 +538,15 @@ export const trackerUI = {
         color: #666;
       }
 
-      .forum-pill:not(.completed):not(.locked) {
+      .forum-pill:not(.completed):not(.locked):not(.empty) {
         background: var(--neo-warning);
         color: #fff;
+      }
+
+      .forum-pill.empty {
+        background: #F5C518;
+        color: #000;
+        border-color: #000;
       }
 
       .forum-pill:hover:not(.locked) {
@@ -563,6 +573,7 @@ export const trackerUI = {
       .dot { width: 12px; height: 12px; border: 2px solid #000; }
       .dot.green { background: var(--neo-success); }
       .dot.orange { background: var(--neo-warning); }
+      .dot.yellow { background: #F5C518; }
       .dot.gray { background: #ccc; }
       .status-item .label { 
         font-size: 13px; 
@@ -691,15 +702,23 @@ export const trackerUI = {
                 let icon = '';
                 let href = '';
                 if (f.completion === true) {
-                  statusClass = 'completed'; 
+                  // DONE: Forum selesai dikerjakan
+                  statusClass = 'completed';
                   icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
                   href = f.id ? `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}` : `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
+                } else if (f.id && f.hasTopics === false) {
+                  // EMPTY: Forum aktif tapi dosen belum isi topik
+                  statusClass = 'empty';
+                  icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+                  href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
                 } else if (f.id) {
-                  statusClass = ''; 
+                  // WAIT: Forum aktif, ada topik, belum dikerjakan
+                  statusClass = '';
                   icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
                   href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}/forum/${f.id}`;
                 } else {
-                  statusClass = 'locked'; 
+                  // LOCKED: Forum belum dibuka dosen
+                  statusClass = 'locked';
                   icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
                   href = `https://mentari.unpam.ac.id/u-courses/${course.kode_course}?accord_pertemuan=${s.kode}`;
                 }
