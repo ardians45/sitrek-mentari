@@ -7,9 +7,7 @@ export const STORAGE_KEYS = {
   COURSE_DATA: "mentari_course_data",
   STUDENT_DATA: "mentari_student_data",
   NOTIFICATIONS: "mentari_notifications",
-  LAST_UPDATE: "mentari_last_update",
-  GEMINI_API_KEY: "geminiApiKey",
-  GEMINI_ENABLED: "gemini_enabled"
+  LAST_UPDATE: "mentari_last_update"
 };
 
 export const storage = {

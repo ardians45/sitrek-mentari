@@ -16,10 +16,6 @@
         "https://my.unpam.ac.id/login"
       ],
       "js": ["scripts/loader.js"]
-    },
-    {
-      "matches": ["https://mentari.unpam.ac.id/u-courses/*/forum/*/topics/*"],
-      "js": ["scripts/discus.js"]
     }
   ],
   "web_accessible_resources": [

@@ -1398,35 +1398,7 @@ const APP_VERSION = "1.9";
                 tokenInfo.username
               }</span></p>
             </div>
-          </div>
-          
-          <div class="token-data-item">
-            <div class="token-info-section">
-              <button id="update-api-key" class="token-button" style="width: 100%;">
-                <i class="fas fa-key"></i> Update API Key
-              </button>
-            </div>
-          </div>
-          
-          <div class="token-data-item">
-            <div class="token-info-section">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <p><span class="token-key">Gemini AI :</span></p>
-                <label class="switch">
-                  <input type="checkbox" id="gemini-toggle" ${
-                    localStorage.getItem("gemini_enabled") === "true"
-                      ? "checked"
-                      : ""
-                  }>
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-
-
-          <div class="token-data-item version-info">
+          </div>          <div class="token-data-item version-info">
             <div class="token-info-section">
               <div class="version-display">
                 <div class="version-current">
@@ -1463,80 +1435,6 @@ const APP_VERSION = "1.9";
         </div>
       </div>
     `;
-
-    // Add event listeners for new buttons
-    const geminiToggle = document.getElementById("gemini-toggle");
-    if (geminiToggle) {
-      // Load initial state from localStorage
-      const savedGeminiState =
-        localStorage.getItem("gemini_enabled") === "true";
-      geminiToggle.checked = savedGeminiState;
-
-      // Set initial visibility based on saved state
-      const geminiPopup = document.getElementById("geminiChatbot");
-      const geminiToggleBtn = document.getElementById("geminiChatbotToggle");
-
-      if (savedGeminiState) {
-        // If Gemini was enabled, show only the toggle button
-        if (geminiToggleBtn) {
-          geminiToggleBtn.style.display = "flex";
-        }
-        if (geminiPopup) {
-          geminiPopup.style.display = "none";
-        }
-      } else {
-        // If Gemini was disabled, hide both
-        if (geminiToggleBtn) {
-          geminiToggleBtn.style.display = "none";
-        }
-        if (geminiPopup) {
-          geminiPopup.style.display = "none";
-        }
-      }
-
-      geminiToggle.addEventListener("change", function () {
-        const isEnabled = this.checked;
-        localStorage.setItem("gemini_enabled", isEnabled);
-
-        // When toggle is enabled, only show the toggle button
-        const geminiToggleBtn = document.getElementById("geminiChatbotToggle");
-        if (geminiToggleBtn) {
-          geminiToggleBtn.style.display = isEnabled ? "flex" : "none";
-        }
-
-        // Always keep the chat interface hidden when toggle state changes
-        const geminiPopup = document.getElementById("geminiChatbot");
-        if (geminiPopup) {
-          geminiPopup.style.display = "none";
-        }
-      });
-    }
-
-
-    // Add click event to toggle button to show chat interface
-    const geminiToggleBtn = document.getElementById("geminiChatbotToggle");
-    if (geminiToggleBtn) {
-      geminiToggleBtn.addEventListener("click", function () {
-        const geminiPopup = document.getElementById("geminiChatbot");
-        if (geminiPopup) {
-          geminiPopup.style.display = "flex";
-        }
-      });
-    }
-
-    const updateApiKeyBtn = document.getElementById("update-api-key");
-    if (updateApiKeyBtn) {
-      updateApiKeyBtn.addEventListener("click", function () {
-        // Call showApiKeyPopup from apiKeyManager.js
-        if (typeof showApiKeyPopup === "function") {
-          showApiKeyPopup();
-        } else {
-          console.error(
-            "showApiKeyPopup function not found. Make sure apiKeyManager.js is loaded."
-          );
-        }
-      });
-    }
 
     // Load and display last version status
     const versionStatus = getFromLocalStorage(STORAGE_KEYS.VERSION_STATUS);

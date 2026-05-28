@@ -43,22 +43,16 @@ if (window.location.pathname === "/login") {
       if (window.toggleTokenPopup) {
         window.toggleTokenPopup();
       } else {
-        // First load apiKeyManager.js
-        let apiKeyManagerScript = document.createElement("script");
-        apiKeyManagerScript.src = chrome.runtime.getURL("scripts/apiKeyManager.js");
-        apiKeyManagerScript.onload = function () {
-          // Then load token.js after apiKeyManager.js is loaded
-          let tokenScript = document.createElement("script");
-          tokenScript.src = chrome.runtime.getURL("scripts/token.js");
-          tokenScript.onload = function () {
-            // Call the toggle function after script loads
-            if (window.toggleTokenPopup) {
-              window.toggleTokenPopup();
-            }
-          };
-          document.body.appendChild(tokenScript);
+        // Load token.js 
+        let tokenScript = document.createElement("script");
+        tokenScript.src = chrome.runtime.getURL("scripts/token.js");
+        tokenScript.onload = function () {
+          // Call the toggle function after script loads
+          if (window.toggleTokenPopup) {
+            window.toggleTokenPopup();
+          }
         };
-        document.body.appendChild(apiKeyManagerScript);
+        document.body.appendChild(tokenScript);
       }
     }
 

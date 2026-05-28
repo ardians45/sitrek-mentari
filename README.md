@@ -88,7 +88,6 @@ Dashboard rekapitulasi kehadiran yang komprehensif.
 
 | Fitur | Deskripsi |
 |-------|-----------|
-| **Smart Login** | Generate password default dari NIM dan custom background login page |
 | **Version Checker** | Cek update versi terbaru langsung dari GitHub Releases |
 
 ---
@@ -111,7 +110,6 @@ Dashboard rekapitulasi kehadiran yang komprehensif.
 | **Bahasa** | JavaScript (ES6+ Modules) | `import/export`, `async/await`, template literals |
 | **UI Framework** | Vanilla CSS + Injected DOM | Neo Brutalism design system, CSS Custom Properties |
 | **Font** | Plus Jakarta Sans, JetBrains Mono | Google Fonts, dimuat via `@import` |
-| **AI** | Google Gemini 2.0 Flash | Ringkasan diskusi, draft jawaban, chatbot |
 | **Storage** | localStorage API | State management terpusat via `storage.js` |
 | **Auth** | JWT Token Interception | Override `fetch()` dan `XMLHttpRequest` untuk menangkap Bearer token |
 | **API** | REST API Mentari + my.unpam.ac.id | Endpoint untuk courses, forum, presensi |
@@ -123,7 +121,6 @@ Dashboard rekapitulasi kehadiran yang komprehensif.
 
 - **Browser**: Google Chrome (v88+) atau Microsoft Edge (v88+) yang mendukung Manifest V3
 - **Akun**: Mahasiswa aktif Universitas Pamulang dengan akses ke [mentari.unpam.ac.id](https://mentari.unpam.ac.id)
-- **Opsional**: API Key Google Gemini untuk fitur AI (gratis di [aistudio.google.com](https://aistudio.google.com))
 
 ---
 
@@ -181,8 +178,6 @@ Unduh dari halaman [Releases](https://github.com/ardians45/sitrek-mentari/releas
 
 Akses melalui panel **Token Runner** (muncul otomatis):
 
-- **Gemini AI Toggle** — Aktifkan/nonaktifkan AI chatbot
-- **Update API Key** — Masukkan atau perbarui Gemini API key
 - **Cek Update** — Periksa versi terbaru dari GitHub
 
 ---
@@ -212,7 +207,6 @@ Akses melalui panel **Token Runner** (muncul otomatis):
 ├──────────────┴────────────────────────┴─────────────────┤
 │                    External APIs                        │
 │  mentari.unpam.ac.id/api/*  │  my.unpam.ac.id/api/*    │
-│  generativelanguage.googleapis.com (Gemini)             │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -251,7 +245,6 @@ sitrek-mentari/
 │   │   ├── api.js             # HTTP client dengan Bearer auth
 │   │   ├── inject.js          # Script injection ke halaman web
 │   │   ├── interceptor.js     # Override fetch/XHR untuk capture token
-│   │   ├── gemini.js          # Integrasi Google Gemini AI
 │   │   └── storage.js         # Abstraksi localStorage + STORAGE_KEYS
 │   │
 │   ├── components/
@@ -262,16 +255,9 @@ sitrek-mentari/
 │
 └── scripts/
     ├── loader.js              # Bootstrap: inject.js + main.js
-    ├── content.js             # Auto-load token.js + apiKeyManager.js
+    ├── content.js             # Auto-load token.js
     ├── token.js               # Token Runner UI + full course detail viewer
-    ├── apiKeyManager.js       # Manajemen API key Gemini
-    ├── gemini.js              # Gemini AI chatbot interface
-    ├── presensi.js            # Dashboard rekapitulasi kehadiran
-    ├── QuickSurvey.js         # Otomasi survey/kuisioner KHS
-    ├── kuisioner.js           # Auto-click evaluasi dosen
-    ├── pw.js                  # Smart login (auto-fill password)
-    ├── home.js                # Kustomisasi halaman beranda Mentari
-    └── discus.js              # Placeholder (fitur diskusi deprecated)
+    └── presensi.js            # Dashboard rekapitulasi kehadiran
 ```
 
 ---
@@ -285,7 +271,6 @@ sitrek-mentari/
 | **Data** | ✅ Semua data disimpan di `localStorage` browser lokal — tidak dikirim ke server eksternal |
 | **Permissions** | Minimal: `storage`, `activeTab`, `scripting` |
 | **Host Access** | Hanya `mentari.unpam.ac.id` dan `my.unpam.ac.id` |
-| **AI (Opsional)** | API call ke Gemini dilakukan langsung dari browser user, tanpa proxy |
 
 > [!IMPORTANT]
 > Ekstensi ini **tidak** mengumpulkan, mengirim, atau menyimpan data pribadi ke server manapun. Seluruh operasi berjalan secara lokal di browser Anda.
@@ -299,8 +284,6 @@ sitrek-mentari/
 | Data tidak muncul setelah sync | Pastikan Anda sudah login di Mentari, lalu klik Refresh |
 | Token tidak terdeteksi | Refresh (F5) halaman Mentari, lalu klik tombol Refresh di panel |
 | Panel tidak muncul | Pastikan Developer Mode aktif dan ekstensi ter-load di `chrome://extensions` |
-| Gemini AI tidak merespons | Periksa API key melalui tombol "Update API Key" di panel Token Runner |
-| Quick Survey tidak muncul | Pastikan Anda berada di halaman `my.unpam.ac.id/data-akademik/khs` |
 | Presensi gagal dimuat | Pastikan Anda juga login di `my.unpam.ac.id` |
 
 ---
@@ -323,15 +306,6 @@ Klik ikon Refresh (🔄) pada header panel SITREK. Data akan disinkronkan ulang 
 <summary><strong>Apakah ekstensi ini gratis?</strong></summary>
 
 Ya, sepenuhnya gratis dan open-source di bawah lisensi MIT. Anda bebas menggunakan, memodifikasi, dan mendistribusikannya.
-</details>
-
-<details>
-<summary><strong>Bagaimana cara mengaktifkan fitur AI?</strong></summary>
-
-1. Dapatkan API key gratis dari [Google AI Studio](https://aistudio.google.com)
-2. Buka panel Token Runner di halaman Mentari
-3. Klik "Update API Key" dan masukkan key Anda
-4. Aktifkan toggle "Gemini AI"
 </details>
 
 <details>
