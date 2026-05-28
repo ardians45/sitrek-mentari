@@ -7,7 +7,8 @@ export const STORAGE_KEYS = {
   COURSE_DATA: "mentari_course_data",
   STUDENT_DATA: "mentari_student_data",
   NOTIFICATIONS: "mentari_notifications",
-  LAST_UPDATE: "mentari_last_update"
+  LAST_UPDATE: "mentari_last_update",
+  PRESENSI_DATA: "mentari_presensi_data"
 };
 
 export const storage = {

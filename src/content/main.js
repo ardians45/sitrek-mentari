@@ -7,52 +7,90 @@ import { trackerUI } from '../components/tracker-ui.js';
 import { initInterceptor } from '../core/interceptor.js';
 
 async function initTracker() {
-  console.log("SITREK Mentari: Initializing...");
+  const isMyUnpam = window.location.hostname.includes('my.unpam.ac.id');
+  console.log(`SITREK Tracker: Initializing (isMyUnpam: ${isMyUnpam})...`);
 
   // 1. Jalankan penangkap token
   initInterceptor();
 
-  // 2. Buat UI
-  trackerUI.createContainer();
-  
-  // 3. Load cached data
-  const cachedCourses = storage.get(STORAGE_KEYS.COURSE_DATA);
-  if (cachedCourses) {
-    trackerUI.updateList(cachedCourses);
-  }
+  if (isMyUnpam) {
+    // Inisialisasi Presensi Tracker di my.unpam.ac.id
+    trackerUI.createContainer(true);
 
-  const cachedStudents = storage.get(STORAGE_KEYS.STUDENT_DATA);
-  if (cachedStudents) {
-    trackerUI.updateStudents(cachedStudents);
-  }
+    // Expose detail modal handler
+    window.runTokenPresensiDetails = (data) => trackerUI.showPresensiDetails(data);
 
-  const cachedNotifs = storage.get(STORAGE_KEYS.NOTIFICATIONS);
-  if (cachedNotifs) {
-    trackerUI.updateNotifications(cachedNotifs);
-  }
+    // Load cached presensi data
+    const cachedPresensi = storage.get(STORAGE_KEYS.PRESENSI_DATA);
+    if (cachedPresensi) {
+      trackerUI.updatePresensiList(cachedPresensi);
+    }
 
-  const lastSyncTime = storage.get(STORAGE_KEYS.LAST_UPDATE, false);
-  const syncText = document.getElementById('last-sync');
-  if (lastSyncTime && syncText) {
+    const lastSyncTime = storage.get(STORAGE_KEYS.LAST_UPDATE, false);
+    const syncText = document.getElementById('last-sync');
+    if (lastSyncTime && syncText) {
       syncText.innerText = `Updated: ${lastSyncTime}`;
-  }
+    }
 
-  // 4. Event Listeners
-  const refreshBtn = document.getElementById('refresh-tracker');
-  const toggleBtn = document.getElementById('toggle-tracker');
-  const header = document.querySelector('.tracker-header');
+    // Event Listeners
+    const refreshBtn = document.getElementById('refresh-tracker');
+    const toggleBtn = document.getElementById('toggle-tracker');
+    const header = document.querySelector('.tracker-header');
 
-  if (refreshBtn) refreshBtn.addEventListener('click', syncData);
-  if (toggleBtn) toggleBtn.addEventListener('click', toggleUI);
-  
-  const shareBtn = document.getElementById('share-summary');
-  if (shareBtn) shareBtn.addEventListener('click', generateWASummary);
+    if (refreshBtn) refreshBtn.addEventListener('click', syncPresensiData);
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleUI);
+    if (header) {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.tracker-actions')) return;
+        toggleUI();
+      });
+    }
+  } else {
+    // Inisialisasi Forum Tracker di mentari.unpam.ac.id
+    trackerUI.createContainer(false);
+    
+    // Load cached data
+    const cachedCourses = storage.get(STORAGE_KEYS.COURSE_DATA);
+    if (cachedCourses) {
+      trackerUI.updateList(cachedCourses);
+    }
 
-  if (header) {
-    header.addEventListener('click', (e) => {
-      if (e.target.closest('.tracker-actions')) return;
-      toggleUI();
-    });
+    const cachedStudents = storage.get(STORAGE_KEYS.STUDENT_DATA);
+    if (cachedStudents) {
+      trackerUI.updateStudents(cachedStudents);
+    }
+
+    const cachedNotifs = storage.get(STORAGE_KEYS.NOTIFICATIONS);
+    if (cachedNotifs) {
+      trackerUI.updateNotifications(cachedNotifs);
+    }
+
+    const userInfo = storage.get(STORAGE_KEYS.USER_INFO);
+    trackerUI.updateProfile(userInfo, cachedCourses);
+
+    const lastSyncTime = storage.get(STORAGE_KEYS.LAST_UPDATE, false);
+    const syncText = document.getElementById('last-sync');
+    if (lastSyncTime && syncText) {
+        syncText.innerText = `Updated: ${lastSyncTime}`;
+    }
+
+    // Event Listeners
+    const refreshBtn = document.getElementById('refresh-tracker');
+    const toggleBtn = document.getElementById('toggle-tracker');
+    const header = document.querySelector('.tracker-header');
+
+    if (refreshBtn) refreshBtn.addEventListener('click', syncData);
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleUI);
+    
+    const shareBtn = document.getElementById('share-summary');
+    if (shareBtn) shareBtn.addEventListener('click', generateWASummary);
+
+    if (header) {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.tracker-actions')) return;
+        toggleUI();
+      });
+    }
   }
 }
 
@@ -77,92 +115,247 @@ async function syncData() {
     if (!coursesResponse || !coursesResponse.data) throw new Error("Invalid response from courses API");
     
     const courseList = coursesResponse.data;
-    const detailedCourses = [];
-    const studentMap = new Map();
     const notifications = [];
+    const studentMap = new Map();
+
+    // Ambil detail seluruh mata kuliah secara paralel
+    const detailedPromises = courseList.map(course => 
+      api.getCourseDetail(course.kode_course).catch(err => {
+        console.warn(`Failed to fetch detail for ${course.kode_course}`, err);
+        return null;
+      })
+    );
+    const detailedCoursesRaw = await Promise.all(detailedPromises);
+    const detailedCourses = detailedCoursesRaw.filter(c => c !== null);
 
     // Get my user info to identify my posts
     const userInfo = storage.get(STORAGE_KEYS.USER_INFO);
-    const myNim = userInfo?.username;
+    let myNim = userInfo?.username || userInfo?.nim;
+    const myName = userInfo?.name || "";
 
-    for (const course of courseList) {
+    // Fallback decode token if myNim not found
+    if (!myNim && token) {
       try {
-        const detail = await api.getCourseDetail(course.kode_course);
-        if (detail) {
-          detailedCourses.push(detail);
-          
-          // Extract students (peserta)
-          if (detail.peserta && Array.isArray(detail.peserta)) {
-            detail.peserta.forEach(s => {
-              if (!studentMap.has(s.nim)) {
-                studentMap.set(s.nim, {
-                  nim: s.nim,
-                  nama: s.nama_mahasiswa || s.nama || s.fullname || "Unknown"
-                });
-              }
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const payload = JSON.parse(jsonPayload);
+        myNim = payload?.username || payload?.nim;
+      } catch (e) {
+        console.warn("Failed to decode token for myNim fallback:", e);
+      }
+    }
+
+    console.log('[SITREK DEBUG] userInfo:', JSON.stringify(userInfo));
+    console.log('[SITREK DEBUG] myNim:', myNim);
+    console.log('[SITREK DEBUG] myName:', myName);
+
+    // Extract students (peserta)
+    detailedCourses.forEach(detail => {
+      if (detail.peserta && Array.isArray(detail.peserta)) {
+        detail.peserta.forEach(s => {
+          if (!studentMap.has(s.nim)) {
+            studentMap.set(s.nim, {
+              nim: s.nim,
+              nama: s.nama_mahasiswa || s.nama || s.fullname || "Unknown"
             });
           }
+        });
+      }
+    });
 
-          // Fetch topics: tag hasTopics on each forum + collect notifications
-          const activeForums = detail.data.flatMap(section =>
-            section.sub_section.filter(sub => sub.kode_template === "FORUM_DISKUSI")
-          );
+    // Helper: nomor pertemuan → nomor pekan
+    function getPekan(isIntensive, pert) {
+      if (isIntensive) {
+        if (pert % 3 === 1) return Math.floor(pert / 3) * 2 + 1;
+        if (pert % 3 === 2) return Math.floor(pert / 3) * 2 + 2;
+        return (pert / 3) * 2;
+      }
+      return pert;
+    }
 
-          for (const forum of activeForums) {
-            const forumId = forum.id_trx_course_sub_section || forum.id;
-            if (!forumId) continue;
+    // Helper: apakah forum ini sudah dibuka?
+    function isForumOpened(f) {
+      return f.kode_template === "FORUM_DISKUSI" && (f.id || f.id_trx_course_sub_section);
+    }
 
-            try {
-              const topicsResponse = await api.getForumTopics(forumId);
-              const topicsData = topicsResponse?.data || topicsResponse?.topics || [];
+    // Hitung opened pekan untuk voting pekan aktif
+    const pekanVotes = {};
+    detailedCourses.forEach(course => {
+      let maxPertNum = 0;
+      course.data.forEach(s => {
+        const match = s.kode_section.match(/\d+/);
+        if (match) maxPertNum = Math.max(maxPertNum, parseInt(match[0]));
+      });
+      const isIntensive = maxPertNum > 14;
 
-              // Tag the forum object so tracker-ui can render the correct status
-              forum.hasTopics = Array.isArray(topicsData) && topicsData.length > 0;
+      course.data.forEach(s => {
+        const hasOpenedForum = s.sub_section.some(f => isForumOpened(f));
+        if (hasOpenedForum) {
+          const match = s.kode_section.match(/\d+/);
+          if (match) {
+            const pertNum = parseInt(match[0]);
+            const p = getPekan(isIntensive, pertNum);
+            pekanVotes[p] = (pekanVotes[p] || 0) + 1;
+          }
+        }
+      });
+    });
 
-              if (forum.hasTopics) {
-                for (const topic of topicsData) {
-                  try {
-                    const replies = await api.getForumReplies(topic.id);
-                    if (replies && Array.isArray(replies)) {
-                      replies.forEach(reply => {
-                        const isFromMe = (reply.username === myNim || reply.nim === myNim);
-                        const isLecturer = reply.id_dosen !== null;
+    // Ambil pekan dengan suara terbanyak (majority week)
+    let majorityWeek = 1;
+    let maxVotes = 0;
+    for (const p in pekanVotes) {
+      const pekan = parseInt(p);
+      const votes = pekanVotes[p];
+      if (votes > maxVotes || (votes === maxVotes && pekan > majorityWeek)) {
+        maxVotes = votes;
+        majorityWeek = pekan;
+      }
+    }
+    console.log(`[SITREK DEBUG] Calculated majorityWeek: ${majorityWeek}`);
 
-                        if (!isFromMe && (isLecturer || reply.is_reply_to_me)) {
-                          notifications.push({
-                            author: isLecturer ? (reply.dosen?.nama_gelar || reply.dosen?.nama_dosen || "Dosen") : (reply.nama_mahasiswa || reply.nama || "Teman"),
-                            time: new Date(reply.createdAt).toLocaleString(),
-                            text: reply.konten ? reply.konten.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : "Melihat balasan baru",
-                            type: isLecturer ? 'lecturer' : 'friend'
-                          });
-                        }
-                      });
-                    }
-                  } catch (replyErr) {
-                    console.warn(`Failed to fetch replies for topic ${topic.id}`, replyErr);
+    // Dapatkan daftar forum aktif yang belum selesai dikerjakan
+    const forumsToFetch = [];
+    detailedCourses.forEach(detail => {
+      detail.data.forEach(section => {
+        section.sub_section.forEach(sub => {
+          if (sub.kode_template === "FORUM_DISKUSI") {
+            const forumId = sub.id_trx_course_sub_section || sub.id;
+            // Hanya fetch forum yang aktif (ada forumId) dan belum selesai (completion !== true)
+            if (forumId && sub.completion !== true) {
+              forumsToFetch.push({ forumId, forum: sub, detail });
+            }
+          }
+        });
+      });
+    });
+
+    console.log(`[SITREK DEBUG] Total forums to fetch: ${forumsToFetch.length}`);
+
+    // Jalankan pemindaian topik forum secara paralel
+    const forumPromises = forumsToFetch.map(async ({ forumId, forum, detail }) => {
+      try {
+        const topicsResponse = await api.getForumTopics(forumId);
+
+        let allPosts = [];
+        if (topicsResponse?.id && Array.isArray(topicsResponse?.data)) {
+          allPosts = topicsResponse.data;
+        } else if (Array.isArray(topicsResponse?.topics)) {
+          topicsResponse.topics.forEach(t => {
+            if (t.data && Array.isArray(t.data)) {
+              allPosts.push(...t.data);
+            }
+          });
+        }
+
+        forum.hasTopics = allPosts.length > 0;
+
+        if (myNim && allPosts.length > 0) {
+          const myPosts = allPosts.filter(p => p.nim === myNim);
+          const myPostIds = new Set(myPosts.map(p => p.id));
+
+          if (myPostIds.size > 0) {
+            // 1. Direct Replies ke post saya
+            const repliesToMe = allPosts.filter(p =>
+              p.id_parent !== null &&
+              myPostIds.has(p.id_parent) &&
+              p.nim !== myNim
+            );
+
+            repliesToMe.forEach(reply => {
+              const isLecturer = reply.id_dosen !== null;
+              notifications.push({
+                id: reply.id,
+                author: isLecturer
+                  ? (reply.dosen?.nama_gelar || reply.dosen?.nama_dosen || 'Dosen')
+                  : (reply.mahasiswa?.nama_mahasiswa || 'Mahasiswa'),
+                type: isLecturer ? 'lecturer' : 'student',
+                text: reply.konten
+                  ? reply.konten.replace(/<[^>]*>/g, '').substring(0, 120) + '...'
+                  : 'Melihat balasan baru',
+                time: reply.createdAt,
+                forumUrl: `https://mentari.unpam.ac.id/u-courses/${detail.kode_course}/forum/${forumId}`,
+                courseName: detail.coursename
+              });
+            });
+
+            // 2. Postingan Dosen baru setelah post saya
+            const myFirstPostTime = new Date(Math.min(...myPosts.map(p => new Date(p.createdAt))));
+            const lecturerPosts = allPosts.filter(p => 
+              p.id_dosen !== null && 
+              new Date(p.createdAt) > myFirstPostTime
+            );
+
+            lecturerPosts.forEach(reply => {
+              notifications.push({
+                id: reply.id,
+                author: reply.dosen?.nama_gelar || reply.dosen?.nama_dosen || 'Dosen',
+                type: 'lecturer',
+                text: reply.konten
+                  ? reply.konten.replace(/<[^>]*>/g, '').substring(0, 120) + '...'
+                  : 'Dosen memposting tanggapan baru',
+                time: reply.createdAt,
+                forumUrl: `https://mentari.unpam.ac.id/u-courses/${detail.kode_course}/forum/${forumId}`,
+                courseName: detail.coursename
+              });
+            });
+
+            // 3. Mention nama panggilan saya di postingan orang lain setelah post saya
+            if (myName) {
+              const myFirstNames = myName.split(' ').filter(n => n.length > 2);
+              if (myFirstNames.length > 0) {
+                const otherPostsAfterMe = allPosts.filter(p =>
+                  p.nim !== myNim &&
+                  p.id_dosen === null &&
+                  new Date(p.createdAt) > myFirstPostTime &&
+                  !myPostIds.has(p.id_parent)
+                );
+
+                otherPostsAfterMe.forEach(post => {
+                  const contentText = (post.konten || "").toLowerCase();
+                  const isMentioned = myFirstNames.some(name => contentText.includes(name.toLowerCase()));
+                  if (isMentioned) {
+                    notifications.push({
+                      id: post.id,
+                      author: post.mahasiswa?.nama_mahasiswa || 'Mahasiswa',
+                      type: 'student',
+                      text: `[Mention] ${post.konten ? post.konten.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 'Menyebut nama Anda'}`,
+                      time: post.createdAt,
+                      forumUrl: `https://mentari.unpam.ac.id/u-courses/${detail.kode_course}/forum/${forumId}`,
+                      courseName: detail.coursename
+                    });
                   }
-                }
-              }
-            } catch (err) {
-              // Forum with no topics may return 404 — treat as empty (no topics yet)
-              forum.hasTopics = false;
-              if (!err.message.includes('404')) {
-                console.warn(`Failed to fetch topics for forum ${forumId}`, err);
+                });
               }
             }
           }
         }
-      } catch (e) {
-        console.warn(`Failed to fetch detail for ${course.kode_course}`, e);
+      } catch (err) {
+        forum.hasTopics = false;
+        if (!err.message.includes('404')) {
+          console.warn(`Gagal fetch forum ${forumId}`, err);
+        }
       }
-    }
+    });
+
+    await Promise.all(forumPromises);
+
 
     const uniqueStudents = Array.from(studentMap.values());
     uniqueStudents.sort((a, b) => a.nama.localeCompare(b.nama));
 
-    // Keep only latest 20 notifications
-    notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
-    const latestNotifications = notifications.slice(0, 20);
+    // Deduplicate by id, sort by time desc, keep 20
+    const seen = new Set();
+    const uniqueNotifs = notifications.filter(n => {
+      if (seen.has(n.id)) return false;
+      seen.add(n.id);
+      return true;
+    });
+    uniqueNotifs.sort((a, b) => new Date(b.time) - new Date(a.time));
+    const latestNotifications = uniqueNotifs.slice(0, 20);
 
     // Simpan data
     const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -176,12 +369,85 @@ async function syncData() {
     trackerUI.updateStudents(uniqueStudents);
     trackerUI.updateNotifications(latestNotifications);
     
+    // Update Profile
+    const updatedUserInfo = storage.get(STORAGE_KEYS.USER_INFO);
+    trackerUI.updateProfile(updatedUserInfo, detailedCourses);
+    
     const syncText = document.getElementById('last-sync');
     if (syncText) syncText.innerText = `Updated: ${now}`;
 
   } catch (error) {
     console.error("Mentari Tracker: Sync failed:", error);
     alert(error.message || "Gagal sinkronisasi.");
+  } finally {
+    trackerUI.setLoading(false);
+    refreshBtn.disabled = false;
+  }
+}
+
+async function syncPresensiData() {
+  const refreshBtn = document.getElementById('refresh-tracker');
+  if (!refreshBtn) return;
+
+  try {
+    trackerUI.setLoading(true);
+    refreshBtn.disabled = true;
+
+    const token = api.getAuthToken();
+    if (!token) {
+      throw new Error("Token belum ditemukan. Coba refresh halaman, login ulang, atau buka menu presensi.");
+    }
+
+    console.log("Presensi Tracker: Starting sync...");
+
+    // Fetch daftar jadwal kuliah
+    const jadwalKuliah = await api.getJadwalKuliah();
+    if (!jadwalKuliah || !jadwalKuliah.length) {
+      throw new Error("Tidak ada jadwal kuliah yang ditemukan.");
+    }
+
+    console.log(`Ditemukan ${jadwalKuliah.length} mata kuliah`);
+
+    // Ambil rincian pertemuan secara paralel
+    const presensiPromises = jadwalKuliah.map(async (jadwal) => {
+      const { id_kelas, id_mata_kuliah, nama_mata_kuliah, sks } = jadwal;
+      try {
+        const presensiPertemuan = await api.getPresensiPertemuan(id_kelas, id_mata_kuliah);
+        return {
+          nama_mata_kuliah,
+          id_mata_kuliah,
+          id_kelas,
+          sks,
+          pertemuan: presensiPertemuan
+        };
+      } catch (err) {
+        console.warn(`Gagal mengambil data presensi untuk ${nama_mata_kuliah}:`, err);
+        return {
+          nama_mata_kuliah,
+          id_mata_kuliah,
+          id_kelas,
+          sks,
+          pertemuan: []
+        };
+      }
+    });
+
+    const allPresensiData = await Promise.all(presensiPromises);
+
+    // Simpan data
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    storage.save(STORAGE_KEYS.PRESENSI_DATA, allPresensiData);
+    storage.save(STORAGE_KEYS.LAST_UPDATE, now);
+
+    // Update UI
+    trackerUI.updatePresensiList(allPresensiData);
+
+    const syncText = document.getElementById('last-sync');
+    if (syncText) syncText.innerText = `Updated: ${now}`;
+
+  } catch (error) {
+    console.error("Presensi Tracker: Sync failed:", error);
+    alert(error.message || "Gagal sinkronisasi data presensi.");
   } finally {
     trackerUI.setLoading(false);
     refreshBtn.disabled = false;
