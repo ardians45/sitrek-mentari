@@ -81,8 +81,16 @@ Buat dan bagikan rekap mingguan ke grup kelas melalui WhatsApp.
 Dashboard rekapitulasi kehadiran yang komprehensif.
 
 - **Data per mata kuliah** — Lihat kehadiran per pertemuan per matkul
+- **Informasi SKS Lengkap** — Menampilkan jumlah SKS per mata kuliah serta total SKS kumulatif di bagian header
 - **Ringkasan kehadiran** — Persentase hadir, izin, alfa
 - **Integrasi my.unpam.ac.id** — Mengambil data langsung dari portal presensi UNPAM
+- **Modal detail pertemuan** — Klik kartu matkul untuk melihat rincian tanggal, status, dan petugas presensi per pertemuan
+
+### 👤 Profil Mahasiswa
+Tab khusus untuk memantau data identitas diri secara instan.
+
+- **Informasi Akademik** — Menampilkan nama lengkap, NIM, dan kelas aktif
+- **Daya Dukung Lokal** — Data diekstrak secara lokal dan aman dari token login tanpa pengiriman data ke pihak luar
 
 ### ⚡ Alat Produktivitas
 
@@ -163,6 +171,7 @@ Unduh dari halaman [Releases](https://github.com/ardians45/sitrek-mentari/releas
 | **Forum** | Dashboard progres forum diskusi semua mata kuliah |
 | **Mahasiswa** | Daftar rekan sekelas diurutkan berdasarkan abjad dengan nomor absen |
 | **Notifikasi** | Daftar balasan baru dari dosen dan mahasiswa lain |
+| **Profil** | Detail informasi pribadi mahasiswa (Nama, NIM, Kelas) |
 
 ### Fitur Utama
 
