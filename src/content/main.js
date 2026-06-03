@@ -241,9 +241,12 @@ async function syncData() {
         const topicsResponse = await api.getForumTopics(forumId);
 
         let allPosts = [];
+        let hasTopics = false;
         if (topicsResponse?.id && Array.isArray(topicsResponse?.data)) {
           allPosts = topicsResponse.data;
+          hasTopics = allPosts.length > 0;
         } else if (Array.isArray(topicsResponse?.topics)) {
+          hasTopics = topicsResponse.topics.length > 0;
           topicsResponse.topics.forEach(t => {
             if (t.data && Array.isArray(t.data)) {
               allPosts.push(...t.data);
@@ -251,7 +254,7 @@ async function syncData() {
           });
         }
 
-        forum.hasTopics = allPosts.length > 0;
+        forum.hasTopics = hasTopics;
 
         if (myNim && allPosts.length > 0) {
           const myPosts = allPosts.filter(p => p.nim === myNim);
